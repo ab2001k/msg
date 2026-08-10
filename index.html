@@ -120,7 +120,7 @@
         .time-val { font-size: 2rem; color: var(--primary); font-weight: 900; font-variant-numeric: tabular-nums; line-height: 1; }
         .time-lbl { font-size: 0.65rem; color: var(--secondary); margin-top: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;}
         
-        .hint-box { background: var(--border-acc); padding: 15px; border-radius: 10px; font-style: italic; font-size: 0.95rem; margin-bottom: 15px; border-left: 3px solid var(--primary); text-align: left;}
+        .hint-box { background: var(--border-acc); padding: 15px; border-radius: 10px; font-size: 0.95rem; margin-bottom: 15px; border-left: 3px solid var(--primary); text-align: left; display: flex; flex-direction: column; gap: 6px;}
         
         /* Modals */
         .modal {
@@ -229,9 +229,15 @@
             <p class="subtitle">End-to-end encrypted, time-locked messaging.</p>
             
             <div id="creation-form" class="form-grid">
-                <div class="form-group">
-                    <label>Optional Teaser / Hint</label>
-                    <input type="text" id="hint-input" placeholder="e.g., 'A surprise for our anniversary...'" maxlength="60">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Optional Teaser / Hint</label>
+                        <input type="text" id="hint-input" placeholder="e.g., 'A surprise...'" maxlength="60">
+                    </div>
+                    <div class="form-group">
+                        <label>Sender Alias (Optional)</label>
+                        <input type="text" id="sender-name-input" placeholder="e.g., Secret Admirer" maxlength="40">
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -285,10 +291,16 @@
                     </div>
                 </div>
 
-                <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:0.8rem; color:#aaa; font-weight:600; margin-top:5px;">
-                    <input type="checkbox" id="show-timer-input" checked style="width:18px; height:18px; margin:0; accent-color: var(--primary);">
-                    Broadcast live countdown timer
-                </label>
+                <div style="display:flex; flex-direction:column; gap:12px; margin-top:5px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border: 1px solid var(--border-acc);">
+                    <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:0.8rem; color:#aaa; font-weight:600; margin:0;">
+                        <input type="checkbox" id="show-timer-input" checked style="width:18px; height:18px; margin:0; accent-color: var(--primary); flex-shrink: 0;">
+                        Broadcast live unlock countdown timer
+                    </label>
+                    <label id="expiry-checkbox-container" class="hidden" style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:0.8rem; color:#aaa; font-weight:600; margin:0;">
+                        <input type="checkbox" id="show-expiry-input" checked style="width:18px; height:18px; margin:0; accent-color: var(--error); flex-shrink: 0;">
+                        Broadcast destruction countdown to receiver
+                    </label>
+                </div>
                 
                 <button onclick="startGeneration()">
                     <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
@@ -350,11 +362,11 @@
                 </div>
                 
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
-                    <button class="secondary-btn" onclick="copyBoth('link-output', 'final-pass-output', this)" style="flex: 1; font-size: 0.8rem; padding: 12px; display:flex; align-items:center; justify-content:center;">
+                    <button class="secondary-btn" onclick="copyBothValues(document.getElementById('link-output').value, document.getElementById('final-pass-output').value, this)" style="flex: 1; font-size: 0.8rem; padding: 12px; display:flex; align-items:center; justify-content:center;">
                         <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
                         Copy Both
                     </button>
-                    <button onclick="shareWhatsApp('link-output', 'final-pass-output')" style="flex: 1; font-size: 0.8rem; padding: 12px; background: #25D366; color: #fff; border:none; display:flex; align-items:center; justify-content:center;">
+                    <button onclick="shareWhatsApp(document.getElementById('link-output').value, document.getElementById('final-pass-output').value)" style="flex: 1; font-size: 0.8rem; padding: 12px; background: #25D366; color: #fff; border:none; display:flex; align-items:center; justify-content:center;">
                         <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
                         WhatsApp
                     </button>
@@ -382,7 +394,9 @@
             <h1 id="receiver-title">Secure Time Capsule</h1>
             <p class="subtitle" id="receiver-subtitle">Authenticating temporal coordinates...</p>
             
+            <div id="receiver-meta" class="hint-box hidden" style="font-size: 0.85rem; text-align: center; border-left: none; padding: 10px; justify-content: center; align-items: center;"></div>
             <div id="receiver-hint" class="hint-box hidden"></div>
+            
             <div id="countdown" class="hidden"></div>
             
             <div id="calendar-actions" class="hidden" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px;">
@@ -415,6 +429,9 @@
             <div id="message-section" class="hidden">
                 <p style="font-size: 0.85rem; color: var(--secondary); margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Security Protocol Active</p>
                 <p style="font-size: 0.75rem; color: #888; margin-top: 5px;">Text obfuscates if screen capture is attempted.</p>
+                
+                <div id="destruction-timer" style="font-size: 0.85rem; color: var(--error); margin-top: 15px; font-weight: bold;" class="hidden"></div>
+                
                 <div id="secret-message-box">
                     <span id="revealed-text" class="blurred-text"></span>
                 </div>
@@ -493,9 +510,7 @@
             return `Secure Time Capsule ⏳\n\nURL = ${link}\nPassword = ${pass}`;
         }
         
-        function copyBoth(linkId, passId, btnElement) {
-            const link = document.getElementById(linkId).value || linkId; // accepts ID or direct value
-            const pass = document.getElementById(passId).value || passId;
+        function copyBothValues(link, pass, btnElement) {
             const text = getFormattedShareText(link, pass);
             navigator.clipboard.writeText(text);
             const origHTML = btnElement.innerHTML;
@@ -503,9 +518,7 @@
             setTimeout(() => btnElement.innerHTML = origHTML, 2000);
         }
 
-        function shareWhatsApp(linkId, passId) {
-            const link = document.getElementById(linkId).value || linkId;
-            const pass = document.getElementById(passId).value || passId;
+        function shareWhatsApp(link, pass) {
             const text = encodeURIComponent(getFormattedShareText(link, pass));
             window.open(`https://wa.me/?text=${text}`, '_blank');
         }
@@ -513,10 +526,17 @@
         function toggleCustomExpiry() {
             const type = document.getElementById('expiry-type').value;
             const container = document.getElementById('custom-expiry-container');
+            const expCheck = document.getElementById('expiry-checkbox-container');
+            
             if(type === 'custom') {
                 container.classList.remove('hidden');
+                expCheck.classList.remove('hidden');
+            } else if (type === 'never') {
+                container.classList.add('hidden');
+                expCheck.classList.add('hidden');
             } else {
                 container.classList.add('hidden');
+                expCheck.classList.remove('hidden');
             }
         }
 
@@ -537,6 +557,15 @@
             } catch(e) { console.warn("Time sync failed."); }
         }
         function getNow() { return Date.now() + timeOffset; }
+
+        function formatSimpleTimer(diff) {
+            const d = Math.floor(diff / 86400000), h = Math.floor((diff % 86400000) / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
+            let res = "";
+            if (d > 0) res += `${d}d `;
+            res += `${h.toString().padStart(2,'0')}h ${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
+            return res;
+        }
 
         // --- Crypto (AES-GCM) ---
         const enc = new TextEncoder(), dec = new TextDecoder();
@@ -601,8 +630,8 @@
                                 <button class="secondary-btn" onclick="copyValue('hist-pass-${index}', this)" style="padding: 6px; margin:0; width:auto; display:flex; align-items:center; justify-content:center;"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
                             </div>
                             <div style="display:flex; gap:10px; margin-top:12px;">
-                                <button class="secondary-btn" onclick="copyBoth('${h.link}', '${h.pass}', this)" style="flex:1; padding:8px; font-size:0.75rem; display:flex; align-items:center; justify-content:center;"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg> Copy</button>
-                                <button class="secondary-btn" onclick="shareWhatsApp('${h.link}', '${h.pass}')" style="flex:1; padding:8px; font-size:0.75rem; border-color:#25D366; color:#25D366; display:flex; align-items:center; justify-content:center;"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg> Share</button>
+                                <button class="secondary-btn" onclick="copyBothValues('${h.link}', '${h.pass}', this)" style="flex:1; padding:8px; font-size:0.75rem; display:flex; align-items:center; justify-content:center; gap:6px;"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg> Copy</button>
+                                <button class="secondary-btn" onclick="shareWhatsApp('${h.link}', '${h.pass}')" style="flex:1; padding:8px; font-size:0.75rem; border-color:#25D366; color:#25D366; display:flex; align-items:center; justify-content:center; gap:6px;"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg> Share</button>
                             </div>
                             <a href="${h.link}" target="_blank" style="color:var(--secondary); word-break: break-all; display:flex; align-items:center; gap:5px; margin-top:15px; font-weight:bold;">
                                 <svg viewBox="0 0 24 24" style="width:14px; height:14px;"><path d="M13.13 22.19L11.5 18.36C13.07 17.78 14.54 17 15.9 16.09L13.13 22.19M5.64 12.5L1.81 10.87L7.91 8.1C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39C21.61 2.39 16.66 .269 11 5.93C8.81 8.12 7.5 10.53 6.65 12.64C6.37 13.39 6.56 14.21 7.11 14.77L9.24 16.89C9.79 17.45 10.61 17.63 11.36 17.35C13.47 16.5 15.88 15.19 18.07 13C23.73 7.34 21.61 2.39 21.61 2.39M14.36 9.64C13.58 9.64 12.95 9.01 12.95 8.23C12.95 7.45 13.58 6.82 14.36 6.82C15.14 6.82 15.77 7.45 15.77 8.23C15.77 9.01 15.14 9.64 14.36 9.64Z"/></svg>
@@ -633,7 +662,12 @@
             generatedPass = document.getElementById('pass-input').value;
             const theme = document.getElementById('theme-input').value;
             generatedHint = document.getElementById('hint-input').value;
+            
+            // New meta parameters
+            const senderName = document.getElementById('sender-name-input').value;
+            const creationTime = Date.now();
             const showTimer = document.getElementById('show-timer-input').checked ? 1 : 0;
+            const showExpiry = document.getElementById('show-expiry-input').checked ? 1 : 0;
             const expiryType = document.getElementById('expiry-type').value;
 
             if (!msg || !timeVal || !generatedPass) return showAlert("Missing Data", "Payload, Unlock Time, and Password are required parameters.", true);
@@ -655,7 +689,11 @@
             }
 
             const encrypted = await encryptData(msg, generatedPass);
-            const payload = { t: generatedUnlockTime, e: expiryTime, th: theme, st: showTimer, h: generatedHint, i: encrypted.iv, d: encrypted.data };
+            const payload = { 
+                t: generatedUnlockTime, e: expiryTime, th: theme, st: showTimer, h: generatedHint, 
+                sn: senderName, ct: creationTime, se: showExpiry,
+                i: encrypted.iv, d: encrypted.data 
+            };
             
             generatedLongLink = `${window.location.origin}${window.location.pathname}#${btoa(JSON.stringify(payload))}`;
             
@@ -726,6 +764,16 @@
                     };
                     if(titles[rPayload.th]) document.getElementById('receiver-title').innerText = titles[rPayload.th];
                 }
+                
+                // Display Meta block
+                let metaHtml = "";
+                if(rPayload.sn) metaHtml += `<div style="color:var(--primary); font-weight:bold; font-size:0.95rem; margin-bottom:5px;">Sealed by: ${rPayload.sn}</div>`;
+                if(rPayload.ct) metaHtml += `<div style="color:var(--text); font-size:0.75rem;">Created on: ${new Date(rPayload.ct).toLocaleString()}</div>`;
+                if(metaHtml !== "") {
+                    document.getElementById('receiver-meta').innerHTML = metaHtml;
+                    document.getElementById('receiver-meta').classList.remove('hidden');
+                }
+
                 if(rPayload.h) {
                     const hintEl = document.getElementById('receiver-hint');
                     hintEl.innerText = `${rPayload.h}`;
@@ -781,7 +829,7 @@
 
             if (rPayload.e !== 0 && now > rPayload.e) {
                 clearInterval(timerInt);
-                ['countdown', 'unlock-section', 'message-section', 'calendar-actions', 'receiver-hint'].forEach(id => document.getElementById(id).classList.add('hidden'));
+                ['countdown', 'unlock-section', 'message-section', 'calendar-actions', 'receiver-hint', 'receiver-meta'].forEach(id => document.getElementById(id).classList.add('hidden'));
                 document.getElementById('destroyed-section').classList.remove('hidden');
                 document.getElementById('receiver-subtitle').innerText = "Signal lost.";
                 return;
@@ -801,8 +849,20 @@
                 document.getElementById('countdown').classList.add('hidden');
                 document.getElementById('calendar-actions').classList.add('hidden');
                 document.getElementById('receiver-subtitle').innerText = "Temporal lock disengaged.";
+                
                 if (document.getElementById('message-section').classList.contains('hidden')) {
                     document.getElementById('unlock-section').classList.remove('hidden');
+                } else {
+                    // It is unlocked and we are viewing it. Handle live destruction timer.
+                    if (rPayload.e !== 0) {
+                        const destructEl = document.getElementById('destruction-timer');
+                        destructEl.classList.remove('hidden');
+                        if (rPayload.se === 1) {
+                            destructEl.innerHTML = `<svg style="width:14px; height:14px; fill:var(--error); vertical-align:middle; margin-right:4px;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> Destructs in: <b>${formatSimpleTimer(rPayload.e - now)}</b>`;
+                        } else {
+                            destructEl.innerHTML = `<svg style="width:14px; height:14px; fill:var(--error); vertical-align:middle; margin-right:4px;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg> <b>Self-destruction enabled (Time Hidden)</b>`;
+                        }
+                    }
                 }
             }
         }
@@ -815,6 +875,9 @@
                 document.getElementById('revealed-text').innerText = text;
                 setupPress();
                 setupAntiScreenshot();
+                
+                // Force a check right away to render the destruction timer immediately
+                checkTimeLock();
             } else {
                 showAlert("Access Denied", "Invalid Decryption Password.", true);
             }
