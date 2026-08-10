@@ -4,235 +4,330 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ChronoLock | Secure Time Capsule</title>
-    <!-- Colorful SVG Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2366fcf1' /%3E%3Cstop offset='100%25' stop-color='%2345a29e' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='%231f2833' /%3E%3Cpath d='M30 45 V35 A20 20 0 0 1 70 35 V45 H75 V80 H25 V45 Z' fill='url(%23g)' /%3E%3Ccircle cx='50' cy='62' r='8' fill='%230b0c10' /%3E%3Cpath d='M50 62 L50 40' stroke='%230b0c10' stroke-width='4' stroke-linecap='round' /%3E%3C/svg%3E">
     
     <style>
         :root {
-            --bg-color: #0b0c10;
-            --primary: #66fcf1;
-            --secondary: #45a29e;
-            --surface: #1f2833;
-            --text: #c5c6c7;
-            --error: #ff5252;
-            --glass: rgba(31, 40, 51, 0.85);
+            /* Theme 1: Cyber (Default) */
+            --bg-color: #0b0c10; --primary: #66fcf1; --secondary: #45a29e;
+            --surface: #1f2833; --text: #c5c6c7; --error: #ff5252;
+            --glass: rgba(31, 40, 51, 0.85); --border-acc: rgba(102, 252, 241, 0.2);
         }
 
-        /* Themes */
-        body.theme-birthday { --bg-color: #1a0b16; --primary: #ff4081; --secondary: #ffd54f; --surface: #3a1c31; }
-        body.theme-treasure { --bg-color: #12100a; --primary: #d4af37; --secondary: #8d6e63; --surface: #2a2416; }
-        body.theme-romantic { --bg-color: #1f0b12; --primary: #ff4d6d; --secondary: #ffb3c6; --surface: #3a1222; }
+        /* Theme 2: Romantic */
+        body.theme-romantic { 
+            --bg-color: #1f0b12; --primary: #ff4d6d; --secondary: #ffb3c6; 
+            --surface: #3a1222; --glass: rgba(58, 18, 34, 0.85); --border-acc: rgba(255, 77, 109, 0.2);
+        }
+        
+        /* Theme 3: Birthday */
+        body.theme-birthday { 
+            --bg-color: #1a0b16; --primary: #b388ff; --secondary: #ffd54f; 
+            --surface: #2d1b2e; --glass: rgba(45, 27, 46, 0.85); --border-acc: rgba(179, 136, 255, 0.2);
+        }
+
+        /* Theme 4: Treasure */
+        body.theme-treasure { 
+            --bg-color: #12100a; --primary: #d4af37; --secondary: #8d6e63; 
+            --surface: #2a2416; --glass: rgba(42, 36, 22, 0.85); --border-acc: rgba(212, 175, 55, 0.2);
+        }
+
+        /* Theme 5: Stealth (Monochrome/Minimal) */
+        body.theme-stealth { 
+            --bg-color: #000000; --primary: #ffffff; --secondary: #888888; 
+            --surface: #111111; --glass: rgba(17, 17, 17, 0.95); --border-acc: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Theme 6: Neon (Synthwave) */
+        body.theme-neon { 
+            --bg-color: #0f0019; --primary: #ff00ff; --secondary: #00ffff; 
+            --surface: #1f0033; --glass: rgba(31, 0, 51, 0.85); --border-acc: rgba(255, 0, 255, 0.3);
+        }
         
         body {
             font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg-color); color: var(--text);
-            margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            margin: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh;
             text-align: center; user-select: none; -webkit-user-select: none; transition: all 0.5s ease;
         }
 
         .container {
-            background: var(--glass); padding: 2rem; border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.05); max-width: 500px; width: 90%;
+            background: var(--glass); padding: 2rem; border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-acc); max-width: 500px; width: 90%;
             margin: 20px 0; position: relative; overflow: hidden;
         }
 
         h1 { color: var(--primary); margin: 0 0 5px 0; font-size: 1.8rem; text-transform: uppercase; letter-spacing: 2px;}
-        p.subtitle { font-size: 0.85rem; color: #888; margin-bottom: 20px; }
+        p.subtitle { font-size: 0.85rem; color: var(--secondary); margin-bottom: 20px; opacity: 0.8;}
 
         .form-grid { display: grid; gap: 15px; text-align: left; }
-        .form-group label { display: block; font-size: 0.75rem; color: var(--secondary); margin-bottom: 6px; font-weight: 600; text-transform: uppercase;}
+        .form-group label { display: block; font-size: 0.75rem; color: var(--secondary); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
         
+        /* Custom Inputs & Dropdowns */
         input[type="text"], input[type="password"], input[type="datetime-local"], select, textarea {
-            width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
-            color: white; border-radius: 8px; box-sizing: border-box; font-family: inherit;
+            width: 100%; padding: 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-acc);
+            color: white; border-radius: 10px; box-sizing: border-box; font-family: inherit; font-size: 0.95rem;
+            transition: all 0.3s ease;
         }
-        input:focus, select:focus, textarea:focus { border-color: var(--primary); outline: none; }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 10px var(--border-acc); }
         textarea { resize: vertical; min-height: 120px; }
-        .char-count { text-align: right; font-size: 0.7rem; color: #888; margin-top: 4px; }
+        
+        select {
+            appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 12px center; background-size: 18px;
+            padding-right: 40px; cursor: pointer;
+        }
+        select:focus {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        }
+        
+        .char-count { text-align: right; font-size: 0.7rem; color: var(--secondary); margin-top: 6px; font-weight: bold; }
 
         button {
-            background: var(--primary); color: #000; border: none; padding: 14px; border-radius: 8px;
+            background: var(--primary); color: var(--bg-color); border: none; padding: 15px; border-radius: 10px;
             font-weight: 800; font-size: 0.95rem; cursor: pointer; width: 100%; margin-top: 10px;
-            text-transform: uppercase; transition: all 0.2s;
+            text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s;
+            display: flex; justify-content: center; align-items: center; gap: 8px;
         }
-        button:hover { filter: brightness(1.1); transform: translateY(-2px); }
+        button:hover { filter: brightness(1.2); transform: translateY(-2px); box-shadow: 0 5px 15px var(--border-acc); }
         button:active { transform: translateY(0); }
         
-        .secondary-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
-        .secondary-btn:hover { background: rgba(255,255,255,0.05); }
+        .secondary-btn { background: rgba(0,0,0,0.3); border: 1px solid var(--primary); color: var(--primary); }
+        .secondary-btn:hover { background: var(--border-acc); }
 
         .hidden { display: none !important; }
+        svg { width: 18px; height: 18px; fill: currentColor; }
 
         /* Secret Message Display */
         #secret-message-box {
-            margin-top: 20px; padding: 30px 20px; background: rgba(0,0,0,0.6);
-            border-left: 4px solid var(--primary); border-radius: 4px 12px 12px 4px;
-            font-size: 1.1rem; line-height: 1.6; word-wrap: break-word; text-align: left;
+            margin-top: 20px; padding: 30px; background: rgba(0,0,0,0.5);
+            border-left: 4px solid var(--primary); border-radius: 8px 16px 16px 8px;
+            font-size: 1.15rem; line-height: 1.7; word-wrap: break-word; text-align: left;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
         }
         .blurred-text { filter: blur(12px); opacity: 0.3; pointer-events: none; transition: all 0.2s ease; }
         
-        #countdown { font-size: 2.2rem; color: var(--primary); font-weight: 900; margin: 15px 0; font-variant-numeric: tabular-nums; }
-        .hint-box { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; font-style: italic; font-size: 0.9rem; margin-bottom: 15px; color: var(--text); }
+        /* Advanced Timer Blocks */
+        #countdown { display: flex; justify-content: center; gap: 10px; margin: 25px 0; }
+        .time-box {
+            background: rgba(0,0,0,0.6); border: 1px solid var(--border-acc);
+            border-radius: 12px; padding: 15px 10px; min-width: 65px;
+            display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .time-val { font-size: 2rem; color: var(--primary); font-weight: 900; font-variant-numeric: tabular-nums; line-height: 1; }
+        .time-lbl { font-size: 0.65rem; color: var(--secondary); margin-top: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;}
         
-        /* Modals & Overlays */
+        .hint-box { background: var(--border-acc); padding: 15px; border-radius: 10px; font-style: italic; font-size: 0.95rem; margin-bottom: 15px; border-left: 3px solid var(--primary); text-align: left;}
+        
+        /* Glassmorphic Modals & Overlays */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center;
-            z-index: 1000; padding: 20px; box-sizing: border-box; backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center;
+            z-index: 1000; padding: 20px; box-sizing: border-box; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
-        .modal-content { background: var(--surface); padding: 25px; border-radius: 12px; max-width: 450px; text-align: left; border: 1px solid var(--primary); }
+        .modal.active { opacity: 1; pointer-events: all; }
         
-        #screenshot-warning { background: #ff0000; color: white; flex-direction: column; text-align: center; font-weight: bold; font-size: 1.5rem; }
+        .modal-content { 
+            background: var(--surface); padding: 30px; border-radius: 16px; max-width: 450px; 
+            text-align: left; border: 1px solid var(--primary); box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+            transform: translateY(20px); transition: transform 0.3s ease;
+        }
+        .modal.active .modal-content { transform: translateY(0); }
         
-        /* History Section */
-        .history-item { background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px; margin-bottom: 10px; text-align: left; border-left: 2px solid var(--secondary); font-size: 0.8rem;}
-        .history-item a { color: var(--primary); word-break: break-all; }
+        #screenshot-warning .modal-content { border-color: var(--error); text-align: center; }
         
-        /* Top Navigation */
-        .top-nav { display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
-        .nav-btn { background: none; border: none; color: var(--secondary); font-size: 0.8rem; padding: 0; width: auto; text-transform: none; font-weight: normal; margin: 0; cursor: pointer; }
-        .nav-btn:hover { color: var(--primary); transform: none; }
+        /* Navigation */
+        .top-nav { display: flex; justify-content: space-between; margin-bottom: 25px; border-bottom: 1px solid var(--border-acc); padding-bottom: 15px; }
+        .nav-btn { background: none; border: none; color: var(--secondary); font-size: 0.8rem; padding: 5px 10px; width: auto; text-transform: uppercase; font-weight: 700; margin: 0; cursor: pointer; border-radius: 6px; letter-spacing: 0.5px;}
+        .nav-btn:hover { color: var(--primary); background: rgba(255,255,255,0.05); transform: none; box-shadow: none; }
+
+        .dev-footer { margin-top: 30px; font-size: 0.8rem; color: #666; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 20px;}
+        .dev-footer a { color: var(--secondary); text-decoration: none; transition: color 0.2s; }
+        .dev-footer a:hover { color: var(--primary); }
     </style>
 </head>
 <body>
 
     <!-- SCREENSHOT WARNING OVERLAY -->
-    <div id="screenshot-warning" class="modal hidden">
-        <h1 style="color:white; font-size:4rem; margin:0;">⚠️</h1>
-        <p>SCREEN CAPTURE / RECORDING ATTEMPT DETECTED.</p>
-        <p style="font-size:1rem; font-weight:normal;">The payload has been hidden to protect data integrity.</p>
-        <button onclick="dismissWarning()" style="background:white; color:red; max-width: 200px;">Acknowledge</button>
+    <div id="screenshot-warning" class="modal">
+        <div class="modal-content">
+            <svg style="width: 60px; height: 60px; fill: var(--error); margin: 0 auto 15px auto; display: block;" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+            <h2 style="color: var(--error); margin-top: 0; text-transform: uppercase; letter-spacing: 1px;">Security Alert</h2>
+            <p style="color: var(--text); font-size: 0.95rem; line-height: 1.6;">A screen capture or recording attempt was detected. The payload has been concealed to protect data integrity.</p>
+            <button onclick="closeModal('screenshot-warning')" style="background: var(--error); color: white;">Acknowledge</button>
+        </div>
     </div>
 
     <!-- INSTRUCTIONS MODAL -->
-    <div id="instructions-modal" class="modal hidden">
+    <div id="instructions-modal" class="modal">
         <div class="modal-content">
-            <h2 style="color: var(--primary); margin-top:0;">How to use ChronoLock</h2>
-            <ul style="padding-left: 20px; font-size: 0.9rem; color: var(--text); line-height: 1.5;">
-                <li>Write your secret message and set an unlock date/time.</li>
-                <li>Assign a password. <b>The receiver needs both the link and this password.</b></li>
-                <li>Click 'Initialize Lock' to generate the encrypted URL.</li>
-                <li>Because the data is embedded in the link, it might be long. <b>Recommendation:</b> Use a free shortener like <a href="https://tinyurl.com" target="_blank" style="color:var(--secondary)">TinyURL</a> or <a href="https://bitly.com" target="_blank" style="color:var(--secondary)">Bitly</a> before sending via WhatsApp or Email.</li>
+            <h2 style="color: var(--primary); margin-top:0; display: flex; align-items: center; gap: 10px;">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                Protocol Manual
+            </h2>
+            <ul style="padding-left: 20px; font-size: 0.9rem; color: var(--text); line-height: 1.7;">
+                <li>Input your classified data and set a specific temporal coordinate (unlock time).</li>
+                <li>Establish an encryption key. <b>The recipient requires both the generated URL and this key.</b></li>
+                <li>Initialize the lock to generate an End-to-End Encrypted URL.</li>
+                <li><b>Recommendation:</b> Due to payload size, utilize a service like <a href="https://tinyurl.com" target="_blank" style="color:var(--secondary)">TinyURL</a> or <a href="https://bitly.com" target="_blank" style="color:var(--secondary)">Bitly</a> prior to transmission.</li>
             </ul>
-            <button onclick="document.getElementById('instructions-modal').classList.add('hidden')">Close</button>
+            <button onclick="closeModal('instructions-modal')">Close Manual</button>
         </div>
     </div>
 
-    <!-- CREATOR PANEL -->
-    <div id="creator-panel" class="container hidden">
-        <div class="top-nav">
-            <button class="nav-btn" onclick="document.getElementById('instructions-modal').classList.remove('hidden')">ℹ️ Instructions</button>
-            <button class="nav-btn" onclick="toggleHistory()">📜 View History</button>
-        </div>
+    <!-- MAIN CONTAINER -->
+    <div class="container" id="main-container">
         
-        <h1>Seal Protocol</h1>
-        <p class="subtitle">End-to-end encrypted, time-locked messaging.</p>
-        
-        <div id="creation-form" class="form-grid">
-            <div class="form-group">
-                <label>Optional Hint / Teaser (Visible immediately)</label>
-                <input type="text" id="hint-input" placeholder="e.g., 'A surprise for our anniversary...'" maxlength="60">
-            </div>
-
-            <div class="form-group">
-                <label>Target Payload (Message)</label>
-                <textarea id="msg-input" placeholder="Enter classified data..." maxlength="2000" oninput="updateCharCount()"></textarea>
-                <div class="char-count"><span id="char-counter">0</span> / 2000</div>
+        <!-- CREATOR PANEL -->
+        <div id="creator-panel" class="hidden">
+            <div class="top-nav">
+                <button class="nav-btn" onclick="openModal('instructions-modal')">
+                    <svg viewBox="0 0 24 24" style="margin-right:4px;"><path d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z"/></svg> Guide
+                </button>
+                <button class="nav-btn" onclick="toggleHistory()">
+                    <svg viewBox="0 0 24 24" style="margin-right:4px;"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg> History
+                </button>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div class="form-group">
-                    <label>Unlock Time</label>
-                    <input type="datetime-local" id="time-input">
-                </div>
-                <div class="form-group">
-                    <label>Self-Destruct</label>
-                    <select id="expiry-type">
-                        <option value="never">Never (Unlimited)</option>
-                        <option value="1h">1 Hour after unlock</option>
-                        <option value="1d">1 Day after unlock</option>
-                        <option value="3d">3 Days after unlock</option>
-                    </select>
-                </div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div class="form-group">
-                    <label>Visual Theme</label>
-                    <select id="theme-input">
-                        <option value="default">Cyber Security</option>
-                        <option value="romantic">Message to Partner ❤️</option>
-                        <option value="birthday">Birthday Surprise 🎂</option>
-                        <option value="treasure">Treasure Hunt 🗺️</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Decryption Password</label>
-                    <input type="password" id="pass-input" placeholder="Required">
-                </div>
-            </div>
-
-            <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:0.8rem; color:#aaa;">
-                <input type="checkbox" id="show-timer-input" checked style="width:auto; margin:0;">
-                Show live countdown timer to receiver
-            </label>
+            <h1>Seal Protocol</h1>
+            <p class="subtitle">End-to-end encrypted, time-locked messaging.</p>
             
-            <button onclick="generateLink()">Initialize Lock</button>
+            <div id="creation-form" class="form-grid">
+                <div class="form-group">
+                    <label>Optional Teaser / Hint</label>
+                    <input type="text" id="hint-input" placeholder="e.g., 'A surprise for our anniversary...'" maxlength="60">
+                </div>
+
+                <div class="form-group">
+                    <label>Classified Payload</label>
+                    <textarea id="msg-input" placeholder="Enter data..." maxlength="2000" oninput="updateCharCount()"></textarea>
+                    <div class="char-count"><span id="char-counter">0</span> / 2000</div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Unlock Time</label>
+                        <input type="datetime-local" id="time-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Self-Destruct</label>
+                        <select id="expiry-type">
+                            <option value="never">Never (Unlimited)</option>
+                            <option value="1h">1 Hour after unlock</option>
+                            <option value="1d">1 Day after unlock</option>
+                            <option value="3d">3 Days after unlock</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Visual Theme</label>
+                        <select id="theme-input">
+                            <option value="default">Cyber (Default)</option>
+                            <option value="stealth">Stealth (Minimal)</option>
+                            <option value="neon">Neon (Synthwave)</option>
+                            <option value="romantic">Romantic (For Partner)</option>
+                            <option value="birthday">Birthday Surprise</option>
+                            <option value="treasure">Treasure Hunt</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Decryption Key</label>
+                        <input type="password" id="pass-input" placeholder="Required">
+                    </div>
+                </div>
+
+                <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:0.8rem; color:#aaa; font-weight:600; margin-top:5px;">
+                    <input type="checkbox" id="show-timer-input" checked style="width:18px; height:18px; margin:0; accent-color: var(--primary);">
+                    Broadcast live countdown timer
+                </label>
+                
+                <button onclick="generateLink()">
+                    <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                    Initialize Lock
+                </button>
+            </div>
+
+            <div id="link-container" class="form-group hidden" style="margin-top: 25px; border-top: 1px solid var(--border-acc); padding-top: 25px;">
+                <label>Secure Transmission Link:</label>
+                <textarea id="link-output" readonly style="min-height: 80px; font-family: monospace; font-size:0.8rem; word-break: break-all; margin-bottom: 15px; background: rgba(0,0,0,0.6);"></textarea>
+                <button id="copy-btn" class="secondary-btn" onclick="copyLink()">
+                    <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                    Copy Link
+                </button>
+            </div>
+
+            <div id="history-view" class="hidden" style="text-align: left;">
+                <h2 style="font-size: 1.2rem; color: var(--primary); margin-top:0;">Encrypted Archives</h2>
+                <div id="history-list" style="max-height: 400px; overflow-y: auto; padding-right: 5px;"></div>
+                <button class="secondary-btn" onclick="toggleHistory()" style="margin-top: 20px;">Return to Terminal</button>
+            </div>
         </div>
 
-        <div id="link-container" class="form-group hidden" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
-            <label>Secure Transmission Link:</label>
-            <textarea id="link-output" readonly style="min-height: 80px; font-family: monospace; font-size:0.75rem; word-break: break-all; margin-bottom: 10px; background: #000;"></textarea>
-            <button id="copy-btn" class="secondary-btn" onclick="copyLink()">📋 Copy Link</button>
-        </div>
+        <!-- RECEIVER PANEL -->
+        <div id="receiver-panel" class="hidden">
+            <h1 id="receiver-title">Encrypted Data</h1>
+            <p class="subtitle" id="receiver-subtitle">Authenticating temporal coordinates...</p>
+            
+            <div id="receiver-hint" class="hint-box hidden"></div>
+            
+            <div id="countdown" class="hidden"></div>
+            
+            <button id="calendar-btn" class="secondary-btn hidden" style="margin-bottom: 25px;" onclick="downloadICS()">
+                <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+                Sync to Calendar
+            </button>
 
-        <!-- History View -->
-        <div id="history-view" class="hidden" style="text-align: left;">
-            <h2 style="font-size: 1.2rem; color: var(--primary);">Your Sealed Capsules</h2>
-            <div id="history-list"></div>
-            <button class="secondary-btn" onclick="toggleHistory()">Back to Creator</button>
+            <div id="unlock-section" class="hidden">
+                <div class="form-group" style="text-align: left;">
+                    <label>Enter Decryption Key</label>
+                    <input type="password" id="decrypt-pass" placeholder="••••••••">
+                    <button onclick="decryptMessage()">
+                        <svg viewBox="0 0 24 24"><path d="M12 13c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6-6v2h-2v-2h-8v2H6V7c0-2.76 2.24-5 5-5s5 2.24 5 5zm0 4h2v10c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V11c0-1.1.9-2 2-2h12z"/></svg>
+                        Decrypt Payload
+                    </button>
+                </div>
+            </div>
+
+            <div id="message-section" class="hidden">
+                <p style="font-size: 0.85rem; color: var(--secondary); margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Security Protocol Active</p>
+                <p style="font-size: 0.75rem; color: #888; margin-top: 5px;">Text obfuscates if screen capture is attempted.</p>
+                <div id="secret-message-box">
+                    <span id="revealed-text" class="blurred-text"></span>
+                </div>
+                <button id="reveal-btn" style="margin-top:25px; user-select: none;">
+                    <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                    Press and Hold to Scan
+                </button>
+            </div>
+
+            <div id="destroyed-section" class="hidden">
+                <svg style="width: 80px; height: 80px; fill: var(--error); margin: 10px 0;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                <h2 style="color: var(--error); margin-top:0;">Payload Destroyed</h2>
+                <p style="color: #aaa; font-size: 0.9rem;">The designated time window for this data has permanently expired.</p>
+            </div>
+
+            <div style="margin-top: 35px; padding-top: 20px; border-top: 1px solid var(--border-acc);">
+                <button class="nav-btn" onclick="window.location.href = window.location.pathname" style="margin: 0 auto; display: flex; align-items: center; gap: 8px;">
+                    <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                    Initialize New Capsule
+                </button>
+            </div>
         </div>
     </div>
-
-    <!-- RECEIVER PANEL -->
-    <div id="receiver-panel" class="container hidden">
-        <h1 id="receiver-title">Encrypted Data</h1>
-        <p class="subtitle" id="receiver-subtitle">Authenticating temporal coordinates.</p>
-        
-        <div id="receiver-hint" class="hint-box hidden"></div>
-        <div id="countdown" class="hidden"></div>
-        
-        <button id="calendar-btn" class="secondary-btn hidden" style="margin-bottom: 20px;" onclick="downloadICS()">⏰ Add to Calendar</button>
-
-        <div id="unlock-section" class="hidden">
-            <div class="form-group" style="text-align: left;">
-                <label>Enter Decryption Key</label>
-                <input type="password" id="decrypt-pass" placeholder="••••••••">
-                <button onclick="decryptMessage()">Decrypt Payload</button>
-            </div>
-        </div>
-
-        <div id="message-section" class="hidden">
-            <p style="font-size: 0.8rem; color: var(--secondary); margin: 0; font-weight: bold;">PRESS AND HOLD TO REVEAL</p>
-            <p style="font-size: 0.7rem; color: #777;">Text blurs if screen capture is attempted.</p>
-            <div id="secret-message-box">
-                <span id="revealed-text" class="blurred-text"></span>
-            </div>
-            <button id="reveal-btn" style="margin-top:20px; user-select: none;">🧿 HOLD TO READ</button>
-        </div>
-
-        <div id="destroyed-section" class="hidden">
-            <h1 style="color: var(--error); font-size: 3rem; margin:10px 0;">☠️</h1>
-            <h2 style="color: var(--error);">Payload Destroyed</h2>
-            <p style="color: #aaa;">The time window for this message has permanently expired.</p>
-        </div>
-
-        <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
-            <button class="nav-btn" onclick="window.location.href = window.location.pathname">✨ Create your own secret message</button>
-        </div>
+    
+    <div class="dev-footer">
+        Developed by <a href="https://ab2001k.github.io/visit/" target="_blank">Abhik Dutta</a>
     </div>
 
     <script>
+        // --- Modals ---
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
         // --- Network Time Sync ---
         let timeOffset = 0;
         async function syncTrueTime() {
@@ -266,16 +361,16 @@
             } catch (e) { return null; }
         }
 
-        // --- UI & History Logic ---
+        // --- UI & History ---
         function updateCharCount() {
             document.getElementById('char-counter').innerText = document.getElementById('msg-input').value.length;
         }
 
         function saveToHistory(link, hint, time) {
-            let history = JSON.parse(localStorage.getItem('chronoHistory') || '[]');
+            let history = JSON.parse(localStorage.getItem('chronoHistoryV2') || '[]');
             history.unshift({ link, hint: hint || 'No hint provided', time, created: Date.now() });
-            if (history.length > 10) history.pop(); // Keep last 10
-            localStorage.setItem('chronoHistory', JSON.stringify(history));
+            if (history.length > 15) history.pop();
+            localStorage.setItem('chronoHistoryV2', JSON.stringify(history));
         }
 
         function toggleHistory() {
@@ -284,15 +379,15 @@
             document.getElementById('history-view').classList.toggle('hidden', !isHidden);
             
             if (isHidden) {
-                const history = JSON.parse(localStorage.getItem('chronoHistory') || '[]');
+                const history = JSON.parse(localStorage.getItem('chronoHistoryV2') || '[]');
                 const list = document.getElementById('history-list');
-                if (history.length === 0) list.innerHTML = "<p>No past messages found on this device.</p>";
+                if (history.length === 0) list.innerHTML = "<p style='font-size:0.9rem; color:#aaa;'>No archives found on this local machine.</p>";
                 else {
                     list.innerHTML = history.map(h => `
-                        <div class="history-item">
-                            <b>Hint:</b> ${h.hint}<br>
-                            <b>Unlock:</b> ${new Date(h.time).toLocaleString()}<br>
-                            <a href="${h.link}" target="_blank">Open Link</a>
+                        <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 2px solid var(--secondary); font-size: 0.85rem;">
+                            <b style="color:var(--primary);">Hint:</b> ${h.hint}<br>
+                            <b style="color:var(--primary);">Unlock:</b> ${new Date(h.time).toLocaleString()}<br>
+                            <a href="${h.link}" target="_blank" style="color:var(--secondary); word-break: break-all; display:block; margin-top:8px;">Execute Link</a>
                         </div>
                     `).join('');
                 }
@@ -321,7 +416,7 @@
             const showTimer = document.getElementById('show-timer-input').checked ? 1 : 0;
             const expiryType = document.getElementById('expiry-type').value;
 
-            if (!msg || !timeVal || !pass) return alert("Message, Time, and Password are required.");
+            if (!msg || !timeVal || !pass) return alert("Payload, Unlock Time, and Key are required parameters.");
             const unlockTime = new Date(timeVal).getTime();
             let expiryTime = 0;
 
@@ -330,7 +425,6 @@
             else if (expiryType === '3d') expiryTime = unlockTime + (259200000);
 
             const encrypted = await encryptData(msg, pass);
-            // Payload limits: h = hint
             const payload = { t: unlockTime, e: expiryTime, th: theme, st: showTimer, h: hint, i: encrypted.iv, d: encrypted.data };
             
             const fullLink = `${window.location.origin}${window.location.pathname}#${btoa(JSON.stringify(payload))}`;
@@ -342,8 +436,9 @@
 
         function copyLink() {
             const link = document.getElementById('link-output'); link.select(); navigator.clipboard.writeText(link.value);
-            document.getElementById('copy-btn').innerText = "✅ COPIED";
-            setTimeout(() => document.getElementById('copy-btn').innerText = "📋 COPY LINK", 2000);
+            const btn = document.getElementById('copy-btn');
+            btn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Copied`;
+            setTimeout(() => btn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg> Copy Link`, 2000);
         }
 
         // 2. Receiver Logic
@@ -353,36 +448,50 @@
                 rPayload = JSON.parse(atob(window.location.hash.substring(1)));
                 if(rPayload.th) {
                     document.body.className = `theme-${rPayload.th}`;
-                    if(rPayload.th === 'birthday') document.getElementById('receiver-title').innerText = "🎂 Surprise";
-                    if(rPayload.th === 'treasure') document.getElementById('receiver-title').innerText = "🗺️ Coordinates";
-                    if(rPayload.th === 'romantic') document.getElementById('receiver-title').innerText = "💌 For You";
+                    const titles = {
+                        'birthday': 'Birthday Surprise',
+                        'treasure': 'Coordinates Located',
+                        'romantic': 'For You',
+                        'stealth': 'Classified Data',
+                        'neon': 'Transmission Received'
+                    };
+                    if(titles[rPayload.th]) document.getElementById('receiver-title').innerText = titles[rPayload.th];
                 }
                 if(rPayload.h) {
                     const hintEl = document.getElementById('receiver-hint');
-                    hintEl.innerText = `Hint: "${rPayload.h}"`;
+                    hintEl.innerText = `${rPayload.h}`;
                     hintEl.classList.remove('hidden');
                 }
                 checkTimeLock(); timerInt = setInterval(checkTimeLock, 1000);
             } catch (e) {
-                document.getElementById('receiver-subtitle').innerText = "Link is corrupted.";
+                document.getElementById('receiver-subtitle').innerText = "Data stream corrupted.";
             }
         }
 
-        // 3. Calendar ICS Generator
+        // 3. Calendar
         function downloadICS() {
             if(!rPayload) return;
             const d = new Date(rPayload.t);
-            // Format to YYYYMMDDTHHMMSSZ (UTC)
             const fmt = (date) => date.toISOString().replace(/-|:|\.\d+/g, '');
-            const icsData = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART:${fmt(d)}\nDTEND:${fmt(new Date(d.getTime() + 3600000))}\nSUMMARY:Secret Message Unlock\nDESCRIPTION:Your time-locked message at ${window.location.href} is now available!\nEND:VEVENT\nEND:VCALENDAR`;
-            
+            const icsData = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART:${fmt(d)}\nDTEND:${fmt(new Date(d.getTime() + 3600000))}\nSUMMARY:Encrypted Message Unlock\nDESCRIPTION:Your time-locked capsule at ${window.location.href} is now available.\nEND:VEVENT\nEND:VCALENDAR`;
             const blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8' });
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = 'secret_message_unlock.ics';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const link = document.createElement('a'); link.href = window.URL.createObjectURL(blob); link.download = 'capsule_unlock.ics';
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        }
+
+        // 4. Timer Rendering
+        function renderTimer(diff) {
+            const d = Math.floor(diff / 86400000), h = Math.floor((diff % 86400000) / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
+            
+            let html = '';
+            if(d > 0) html += `<div class="time-box"><span class="time-val">${d.toString().padStart(2,'0')}</span><span class="time-lbl">Days</span></div>`;
+            html += `
+                <div class="time-box"><span class="time-val">${h.toString().padStart(2,'0')}</span><span class="time-lbl">Hrs</span></div>
+                <div class="time-box"><span class="time-val">${m.toString().padStart(2,'0')}</span><span class="time-lbl">Mins</span></div>
+                <div class="time-box"><span class="time-val">${s.toString().padStart(2,'0')}</span><span class="time-lbl">Secs</span></div>
+            `;
+            document.getElementById('countdown').innerHTML = html;
         }
 
         function checkTimeLock() {
@@ -391,8 +500,9 @@
 
             if (rPayload.e !== 0 && now > rPayload.e) {
                 clearInterval(timerInt);
-                ['countdown', 'unlock-section', 'message-section', 'calendar-btn'].forEach(id => document.getElementById(id).classList.add('hidden'));
+                ['countdown', 'unlock-section', 'message-section', 'calendar-btn', 'receiver-hint'].forEach(id => document.getElementById(id).classList.add('hidden'));
                 document.getElementById('destroyed-section').classList.remove('hidden');
+                document.getElementById('receiver-subtitle').innerText = "Signal lost.";
                 return;
             }
 
@@ -400,18 +510,15 @@
                 document.getElementById('calendar-btn').classList.remove('hidden');
                 if (rPayload.st === 1) {
                     document.getElementById('countdown').classList.remove('hidden');
-                    document.getElementById('receiver-subtitle').innerText = "Time window opens in:";
-                    const diff = rPayload.t - now;
-                    const d = Math.floor(diff / 86400000), h = Math.floor((diff % 86400000) / 3600000);
-                    const m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
-                    document.getElementById('countdown').innerText = `${d > 0 ? d+'d ' : ''}${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                    document.getElementById('receiver-subtitle').innerText = "Temporal lock disengages in:";
+                    renderTimer(rPayload.t - now);
                 } else {
-                    document.getElementById('receiver-subtitle').innerText = "This message is time-locked. The sender has hidden the timer.";
+                    document.getElementById('receiver-subtitle').innerText = "Payload is locked. Timer is hidden by sender.";
                 }
             } else {
                 document.getElementById('countdown').classList.add('hidden');
                 document.getElementById('calendar-btn').classList.add('hidden');
-                document.getElementById('receiver-subtitle').innerText = "Time window is active.";
+                document.getElementById('receiver-subtitle').innerText = "Temporal lock disengaged.";
                 if (document.getElementById('message-section').classList.contains('hidden')) {
                     document.getElementById('unlock-section').classList.remove('hidden');
                 }
@@ -426,52 +533,37 @@
                 document.getElementById('revealed-text').innerText = text;
                 setupPress();
                 setupAntiScreenshot();
-            } else alert("Invalid Key.");
+            } else alert("Invalid Decryption Key.");
         }
 
-        // --- Screenshot & Screen Record Protection ---
-        let isHolding = false;
-
+        // 5. Security & Press Logic
         function triggerSecurityLock() {
             if (!document.getElementById('message-section').classList.contains('hidden')) {
                 document.getElementById('revealed-text').classList.add('blurred-text');
-                document.getElementById('screenshot-warning').classList.remove('hidden');
+                openModal('screenshot-warning');
             }
         }
 
-        function dismissWarning() {
-            document.getElementById('screenshot-warning').classList.add('hidden');
-        }
-
         function setupAntiScreenshot() {
-            // Detect window losing focus (app switch / screen record prompt)
             window.addEventListener('blur', triggerSecurityLock);
             document.addEventListener('visibilitychange', () => { if (document.hidden) triggerSecurityLock(); });
-
-            // Detect keyboard shortcuts (PrintScreen, Ctrl/Cmd + Shift + S/3/4)
             window.addEventListener('keyup', (e) => { if (e.key === 'PrintScreen') triggerSecurityLock(); });
             window.addEventListener('keydown', (e) => {
-                if ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === 's' || e.key === 'S' || e.key === '3' || e.key === '4')) {
-                    triggerSecurityLock();
-                }
+                if ((e.metaKey || e.ctrlKey) && e.shiftKey && (e.key === 's' || e.key === 'S' || e.key === '3' || e.key === '4')) triggerSecurityLock();
             });
-            // Disable native copy text context menu
             document.addEventListener('copy', (e) => { 
-                if(document.activeElement.id !== 'link-output') {
-                    e.clipboardData.setData('text/plain', "DATA PROTECTED"); e.preventDefault(); 
-                }
+                if(document.activeElement.id !== 'link-output') { e.clipboardData.setData('text/plain', "DATA PROTECTED"); e.preventDefault(); }
             });
         }
 
         function setupPress() {
             const btn = document.getElementById('reveal-btn'), text = document.getElementById('revealed-text');
             const show = () => { 
-                if(document.getElementById('screenshot-warning').classList.contains('hidden')) {
+                if(!document.getElementById('screenshot-warning').classList.contains('active')) {
                     text.classList.remove('blurred-text'); btn.style.background = "var(--secondary)"; 
-                    isHolding = true;
                 }
             };
-            const hide = () => { text.classList.add('blurred-text'); btn.style.background = ""; isHolding = false; };
+            const hide = () => { text.classList.add('blurred-text'); btn.style.background = ""; };
             
             btn.addEventListener('mousedown', show); window.addEventListener('mouseup', hide); document.body.addEventListener('mouseleave', hide);
             btn.addEventListener('touchstart', (e) => { e.preventDefault(); show(); }, {passive: false});
