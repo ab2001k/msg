@@ -3,188 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChronoLock | Advanced Secret Message</title>
+    <title>ChronoLock | Strict Protocol</title>
     <style>
         :root {
-            --bg-color: #0f0f13;
-            --primary: #bb86fc;
-            --secondary: #03dac6;
-            --text: #e0e0e0;
-            --glass: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
+            --bg-color: #0b0c10;
+            --primary: #66fcf1;
+            --secondary: #45a29e;
+            --surface: #1f2833;
+            --text: #c5c6c7;
+            --error: #ff5252;
+            --glass: rgba(31, 40, 51, 0.85);
         }
 
-        /* --- THEMES --- */
-        body.theme-birthday {
-            --bg-color: #1a0b16;
-            --primary: #ff4081;
-            --secondary: #ffd54f;
-        }
-        body.theme-treasure {
-            --bg-color: #12100a;
-            --primary: #d4af37;
-            --secondary: #8d6e63;
-        }
+        body.theme-birthday { --bg-color: #1a0b16; --primary: #ff4081; --secondary: #ffd54f; --surface: #3a1c31; }
+        body.theme-treasure { --bg-color: #12100a; --primary: #d4af37; --secondary: #8d6e63; --surface: #2a2416; }
         
         body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
             background-color: var(--bg-color);
             color: var(--text);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            text-align: center;
-            user-select: none;
-            -webkit-user-select: none;
-            transition: background-color 0.5s ease;
+            margin: 0; display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; text-align: center;
+            user-select: none; -webkit-user-select: none;
+            transition: all 0.5s ease;
         }
 
         .container {
             background: var(--glass);
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--border);
-            max-width: 450px;
-            width: 90%;
+            padding: 2rem; border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.05);
+            max-width: 480px; width: 90%;
         }
 
-        h1 { color: var(--primary); margin-top: 0; font-size: 1.8rem; letter-spacing: 1px;}
-        p { font-size: 0.9rem; color: #aaa; margin-bottom: 20px; line-height: 1.5;}
+        h1 { color: var(--primary); margin: 0 0 5px 0; font-size: 1.8rem; text-transform: uppercase; letter-spacing: 2px;}
+        p.subtitle { font-size: 0.85rem; color: #888; margin-bottom: 25px; }
 
-        .input-group { text-align: left; margin-bottom: 15px; }
-        .input-group label { display: block; font-size: 0.8rem; color: var(--secondary); margin-bottom: 5px; font-weight: bold;}
-
-        input, textarea, select {
-            width: 100%;
-            padding: 12px;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid var(--border);
-            color: white;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-family: inherit;
-            outline: none;
-            transition: border-color 0.3s;
-        }
+        .form-grid { display: grid; gap: 15px; text-align: left; }
+        .form-group label { display: block; font-size: 0.8rem; color: var(--secondary); margin-bottom: 6px; font-weight: 600; text-transform: uppercase;}
         
-        input:focus, textarea:focus, select:focus { border-color: var(--primary); }
+        input[type="text"], input[type="password"], input[type="datetime-local"], select, textarea {
+            width: 100%; padding: 12px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white; border-radius: 8px;
+            box-sizing: border-box; font-family: inherit;
+            transition: border 0.3s, box-shadow 0.3s;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 10px rgba(102, 252, 241, 0.2); }
         textarea { resize: vertical; min-height: 100px; }
 
+        .checkbox-group { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.9rem; color: #aaa;}
+        .checkbox-group input { width: auto; cursor: pointer; }
+
         button {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: #000;
-            border: none;
-            padding: 14px 24px;
-            border-radius: 8px;
-            font-weight: 800;
-            font-size: 1rem;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-            transition: transform 0.1s, filter 0.2s;
+            background: var(--primary); color: #000;
+            border: none; padding: 14px; border-radius: 8px;
+            font-weight: 800; font-size: 1rem; cursor: pointer;
+            width: 100%; margin-top: 10px; text-transform: uppercase;
+            transition: all 0.2s;
         }
-
-        button:hover { filter: brightness(1.2); }
-        button:active { transform: scale(0.98); }
-
+        button:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 252, 241, 0.3); }
+        button:active { transform: translateY(0); }
+        
         .hidden { display: none !important; }
 
-        /* The Secret Message Display */
+        /* Secret Message Display */
         #secret-message-box {
-            position: relative;
-            margin-top: 20px;
-            padding: 40px 20px;
-            background: rgba(0,0,0,0.5);
-            border: 1px solid var(--primary);
-            border-radius: 12px;
-            font-size: 1.2rem;
-            word-wrap: break-word;
-        }
-
-        .blurred-text {
-            filter: blur(10px);
-            transition: filter 0.3s ease;
-            pointer-events: none;
-            opacity: 0.5;
-        }
-
-        /* Countdown & Status */
-        #countdown { font-size: 2.2rem; color: var(--primary); font-weight: bold; margin: 20px 0; font-family: monospace;}
-        #status-text { font-weight: bold; margin-bottom: 10px; color: var(--secondary); }
-        
-        /* Link Output Area */
-        .link-area {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
-        }
-        #link-output {
+            margin-top: 20px; padding: 30px 20px;
             background: rgba(0,0,0,0.6);
-            color: #888;
-            font-family: monospace;
-            font-size: 0.85rem;
-            user-select: all;
-            -webkit-user-select: text;
-            cursor: text;
-            text-align: left;
-            margin-bottom: 10px;
+            border-left: 4px solid var(--primary);
+            border-radius: 4px 12px 12px 4px;
+            font-size: 1.1rem; line-height: 1.6;
+            word-wrap: break-word; position: relative;
         }
-        .secondary-btn {
-            background: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-        }
-        .secondary-btn:hover { background: rgba(255,255,255,0.05); filter: none; }
+        .blurred-text { filter: blur(12px); opacity: 0.3; pointer-events: none; transition: all 0.3s ease; }
+        
+        #countdown { font-size: 2.5rem; color: var(--primary); font-weight: 900; margin: 20px 0; font-variant-numeric: tabular-nums; }
+        #status-indicator { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; background: rgba(0,0,0,0.5); margin-bottom: 15px;}
+        .status-syncing { color: #ffd54f; border: 1px solid #ffd54f; }
+        .status-locked { color: var(--error); border: 1px solid var(--error); }
+        .status-open { color: var(--primary); border: 1px solid var(--primary); }
 
-        /* Destroyed State */
-        .destroyed-icon { font-size: 4rem; margin: 10px 0; }
-        .destroyed-text { color: #ff5252 !important; }
+        #link-output { background: #000; color: #888; font-family: monospace; user-select: all; cursor: text; margin-bottom: 10px; }
+        .secondary-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+        .secondary-btn:hover { background: rgba(102, 252, 241, 0.1); }
     </style>
 </head>
 <body>
 
     <!-- CREATOR PANEL -->
     <div id="creator-panel" class="container hidden">
-        <h1>Seal a Message</h1>
-        <p>Encrypt a message with a custom time window.</p>
+        <h1>Seal Protocol</h1>
+        <p class="subtitle">Time-locked, end-to-end encrypted messaging.</p>
         
-        <div class="input-group">
-            <label>Theme / Preset</label>
-            <select id="theme-input">
-                <option value="default">Default (Cyber/Dark)</option>
-                <option value="birthday">Birthday Wish</option>
-                <option value="treasure">Secret Treasure Hunt</option>
-            </select>
-        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Target Payload (Message)</label>
+                <textarea id="msg-input" placeholder="Enter classified data..."></textarea>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label>Unlock Time</label>
+                    <input type="datetime-local" id="time-input">
+                </div>
+                <div class="form-group">
+                    <label>Self-Destruct</label>
+                    <select id="expiry-type" onchange="toggleCustomExpiry()">
+                        <option value="never">Never (Unlimited)</option>
+                        <option value="1h">1 Hour after unlock</option>
+                        <option value="1d">1 Day after unlock</option>
+                        <option value="2d">2 Days after unlock</option>
+                        <option value="custom">Custom Date/Time</option>
+                    </select>
+                </div>
+            </div>
 
-        <div class="input-group">
-            <textarea id="msg-input" placeholder="Enter your highly classified message here..."></textarea>
-        </div>
-        
-        <div class="input-group">
-            <label>Unlock Date & Time</label>
-            <input type="datetime-local" id="time-input">
-        </div>
+            <div class="form-group hidden" id="custom-expiry-group">
+                <input type="datetime-local" id="custom-expiry-input">
+            </div>
 
-        <div class="input-group">
-            <label>Self-Destruct (Expiry Date & Time)</label>
-            <input type="datetime-local" id="expiry-input">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label>Visual Theme</label>
+                    <select id="theme-input">
+                        <option value="default">Cyber Security</option>
+                        <option value="birthday">Birthday Surprise</option>
+                        <option value="treasure">Treasure Hunt</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Encryption Key (Pass)</label>
+                    <input type="password" id="pass-input" placeholder="Required">
+                </div>
+            </div>
+
+            <label class="checkbox-group">
+                <input type="checkbox" id="show-timer-input" checked>
+                Show live countdown timer to receiver
+            </label>
+            
+            <button onclick="generateLink()">Initialize Lock</button>
         </div>
         
-        <div class="input-group">
-            <label>Decryption Password</label>
-            <input type="password" id="pass-input" placeholder="Required to decrypt">
-        </div>
-        
-        <button onclick="generateLink()">Create Encrypted Capsule</button>
-        
-        <div id="link-container" class="link-area hidden">
-            <label style="color:var(--secondary); font-size: 0.8rem; display:block; margin-bottom: 8px;">Share this securely:</label>
+        <div id="link-container" class="form-group hidden" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+            <label>Secure Transmission Link:</label>
             <input type="text" id="link-output" readonly>
             <button id="copy-btn" class="secondary-btn" onclick="copyLink()">📋 Copy Link</button>
         </div>
@@ -192,246 +157,214 @@
 
     <!-- RECEIVER PANEL -->
     <div id="receiver-panel" class="container hidden">
-        <h1 id="receiver-title">Encrypted Capsule</h1>
-        <div id="status-text">Analyzing temporal data...</div>
+        <div id="status-indicator" class="status-syncing">Syncing Network Time...</div>
+        <h1 id="receiver-title">Encrypted Data</h1>
+        <p class="subtitle" id="receiver-subtitle">Authenticating temporal coordinates.</p>
         
         <div id="countdown" class="hidden"></div>
         
         <div id="unlock-section" class="hidden">
-            <p>The time window is open. Enter the password to decrypt.</p>
-            <input type="password" id="decrypt-pass" placeholder="Enter Password">
-            <button onclick="decryptMessage()">Decrypt</button>
+            <div class="form-group" style="text-align: left;">
+                <label>Enter Decryption Key</label>
+                <input type="password" id="decrypt-pass" placeholder="••••••••">
+                <button onclick="decryptMessage()">Decrypt Payload</button>
+            </div>
         </div>
 
         <div id="message-section" class="hidden">
-            <p style="color: var(--secondary); font-size: 0.85rem; margin-bottom: 5px;">Hold the button below to reveal.</p>
-            <p style="font-size: 0.75rem; color: #777;">Releasing the button conceals the text to prevent screenshots.</p>
+            <p style="font-size: 0.8rem; color: var(--secondary); margin: 0;">PRESS AND HOLD TO REVEAL</p>
+            <p style="font-size: 0.65rem; color: #777;">Prevents unauthorized screenshots</p>
             <div id="secret-message-box">
                 <span id="revealed-text" class="blurred-text"></span>
             </div>
-            <button id="reveal-btn" style="margin-top:20px;">🧿 Press and Hold to Read</button>
+            <button id="reveal-btn" style="margin-top:20px; user-select: none;">🧿 HOLD TO READ</button>
         </div>
 
         <div id="destroyed-section" class="hidden">
-            <div class="destroyed-icon">💀</div>
-            <h2 class="destroyed-text">Signal Lost</h2>
-            <p>This message has exceeded its time window and has been permanently destroyed.</p>
+            <h1 style="color: var(--error); font-size: 3rem; margin:10px 0;">☠️</h1>
+            <h2 style="color: var(--error);">Payload Destroyed</h2>
+            <p style="color: #aaa;">The time window for this message has permanently expired.</p>
         </div>
     </div>
 
     <script>
-        // --- Cryptography Helpers (AES-GCM) ---
-        const enc = new TextEncoder();
-        const dec = new TextDecoder();
+        // --- Network Time Sync (Anti-Cheat) ---
+        let timeOffset = 0;
+        let timeSynced = false;
 
-        async function getPasswordKey(password) {
-            const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(password), {name: "PBKDF2"}, false, ["deriveKey"]);
-            return crypto.subtle.deriveKey(
-                { name: "PBKDF2", salt: enc.encode("ChronoLockSalt123"), iterations: 100000, hash: "SHA-256" },
-                keyMaterial, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]
-            );
+        async function syncTrueTime() {
+            try {
+                // Fetch header from the current site to get true server time, avoiding CORS
+                const res = await fetch(window.location.href, { method: 'HEAD', cache: 'no-store' });
+                const serverDate = res.headers.get('Date');
+                if (serverDate) {
+                    const trueTime = new Date(serverDate).getTime();
+                    timeOffset = trueTime - Date.now();
+                    timeSynced = true;
+                }
+            } catch(e) {
+                console.warn("Time sync failed, using local clock.");
+            }
         }
 
+        function getNow() { return Date.now() + timeOffset; }
+
+        // --- Crypto (AES-GCM) ---
+        const enc = new TextEncoder(), dec = new TextDecoder();
+        async function getPasswordKey(password) {
+            const keyMat = await crypto.subtle.importKey("raw", enc.encode(password), {name: "PBKDF2"}, false, ["deriveKey"]);
+            return crypto.subtle.deriveKey(
+                { name: "PBKDF2", salt: enc.encode("ChronoSalt"), iterations: 100000, hash: "SHA-256" },
+                keyMat, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]
+            );
+        }
         async function encryptData(text, password) {
             const key = await getPasswordKey(password);
             const iv = crypto.getRandomValues(new Uint8Array(12));
-            const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, enc.encode(text));
-            return {
-                iv: Array.from(iv),
-                data: Array.from(new Uint8Array(encrypted))
-            };
+            const encData = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, enc.encode(text));
+            return { iv: Array.from(iv), data: Array.from(new Uint8Array(encData)) };
         }
-
-        async function decryptData(encryptedData, ivArray, password) {
+        async function decryptData(encData, ivArray, password) {
             try {
                 const key = await getPasswordKey(password);
-                const iv = new Uint8Array(ivArray);
-                const data = new Uint8Array(encryptedData);
-                const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, data);
-                return dec.decode(decrypted);
-            } catch (e) {
-                return null;
-            }
+                return dec.decode(await crypto.subtle.decrypt({ name: "AES-GCM", iv: new Uint8Array(ivArray) }, key, new Uint8Array(encData)));
+            } catch (e) { return null; }
         }
 
-        // --- Application Logic ---
-        const creatorPanel = document.getElementById('creator-panel');
-        const receiverPanel = document.getElementById('receiver-panel');
-        let timerInterval;
+        // --- UI Logic ---
+        function toggleCustomExpiry() {
+            const type = document.getElementById('expiry-type').value;
+            document.getElementById('custom-expiry-group').classList.toggle('hidden', type !== 'custom');
+        }
 
-        window.onload = () => {
-            if (window.location.hash && window.location.hash.length > 10) {
+        window.onload = async () => {
+            if (window.location.hash.length > 10) {
+                document.getElementById('receiver-panel').classList.remove('hidden');
+                await syncTrueTime();
                 initReceiver();
             } else {
-                creatorPanel.classList.remove('hidden');
-                // Set default times in creator panel
-                const now = new Date();
-                now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                document.getElementById('creator-panel').classList.remove('hidden');
+                const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
                 document.getElementById('time-input').value = now.toISOString().slice(0,16);
-                
-                const later = new Date(now.getTime() + (3 * 24 * 60 * 60 * 1000)); // Default expiry 3 days later
-                document.getElementById('expiry-input').value = later.toISOString().slice(0,16);
             }
         };
 
-        // Anti-Copy Override (for the main body)
         document.addEventListener('copy', (e) => {
-            // Allow copying if the user is copying from the link output input field
             if (document.activeElement.id === 'link-output') return;
-            
-            e.clipboardData.setData('text/plain', "[CONTENT PROTECTED]");
-            e.preventDefault();
+            e.clipboardData.setData('text/plain', "[DATA EXPUNGED]"); e.preventDefault();
         });
 
-        // 1. Generate Link & Copy Logic
+        // 1. Generate Link
         async function generateLink() {
             const msg = document.getElementById('msg-input').value;
             const timeVal = document.getElementById('time-input').value;
-            const expiryVal = document.getElementById('expiry-input').value;
             const pass = document.getElementById('pass-input').value;
             const theme = document.getElementById('theme-input').value;
+            const showTimer = document.getElementById('show-timer-input').checked ? 1 : 0;
+            const expiryType = document.getElementById('expiry-type').value;
 
-            if (!msg || !timeVal || !expiryVal || !pass) return alert("Please fill all required fields!");
-
+            if (!msg || !timeVal || !pass) return alert("Missing required fields.");
             const unlockTime = new Date(timeVal).getTime();
-            const expiryTime = new Date(expiryVal).getTime();
+            let expiryTime = 0; // 0 = never
 
-            if (expiryTime <= unlockTime) return alert("Self-Destruct time must be AFTER the unlock time!");
+            if (expiryType === '1h') expiryTime = unlockTime + (60 * 60 * 1000);
+            else if (expiryType === '1d') expiryTime = unlockTime + (24 * 60 * 60 * 1000);
+            else if (expiryType === '2d') expiryTime = unlockTime + (48 * 24 * 60 * 60 * 1000);
+            else if (expiryType === 'custom') {
+                const cExp = document.getElementById('custom-expiry-input').value;
+                if (!cExp) return alert("Set custom expiry date!");
+                expiryTime = new Date(cExp).getTime();
+                if (expiryTime <= unlockTime) return alert("Expiry must be AFTER unlock time.");
+            }
 
             const encrypted = await encryptData(msg, pass);
-
-            // Payload: Unlock Time (t), Expiry Time (e), Theme (th), IV (i), Data (d)
-            const payload = {
-                t: unlockTime,
-                e: expiryTime,
-                th: theme,
-                i: encrypted.iv,
-                d: encrypted.data
-            };
-
-            const encodedPayload = btoa(JSON.stringify(payload));
-            const shareableLink = `${window.location.origin}${window.location.pathname}#${encodedPayload}`;
+            const payload = { t: unlockTime, e: expiryTime, th: theme, st: showTimer, i: encrypted.iv, d: encrypted.data };
             
             document.getElementById('link-container').classList.remove('hidden');
-            document.getElementById('link-output').value = shareableLink;
+            document.getElementById('link-output').value = `${window.location.origin}${window.location.pathname}#${btoa(JSON.stringify(payload))}`;
         }
 
         function copyLink() {
-            const linkInput = document.getElementById('link-output');
-            linkInput.select();
-            linkInput.setSelectionRange(0, 99999); // For mobile
-            navigator.clipboard.writeText(linkInput.value).then(() => {
-                const btn = document.getElementById('copy-btn');
-                btn.innerText = "✅ Copied!";
-                setTimeout(() => btn.innerText = "📋 Copy Link", 2500);
-            });
+            const link = document.getElementById('link-output'); link.select(); navigator.clipboard.writeText(link.value);
+            document.getElementById('copy-btn').innerText = "✅ COPIED";
+            setTimeout(() => document.getElementById('copy-btn').innerText = "📋 COPY LINK", 2000);
         }
 
-        // 2. Initialize Receiver Mode
-        let receiverPayload = null;
+        // 2. Receiver Logic
+        let rPayload = null, timerInt;
         function initReceiver() {
-            receiverPanel.classList.remove('hidden');
             try {
-                const hash = window.location.hash.substring(1);
-                receiverPayload = JSON.parse(atob(hash));
-                
-                // Apply Theme
-                if(receiverPayload.th) {
-                    document.body.classList.add(`theme-${receiverPayload.th}`);
-                    if(receiverPayload.th === 'birthday') document.getElementById('receiver-title').innerText = "🎂 Surprise Locked";
-                    if(receiverPayload.th === 'treasure') document.getElementById('receiver-title').innerText = "🗺️ Secret Coordinates";
+                rPayload = JSON.parse(atob(window.location.hash.substring(1)));
+                if(rPayload.th) {
+                    document.body.className = `theme-${rPayload.th}`;
+                    if(rPayload.th === 'birthday') document.getElementById('receiver-title').innerText = "🎂 Surprise";
+                    if(rPayload.th === 'treasure') document.getElementById('receiver-title').innerText = "🗺️ Coordinates";
                 }
-
-                checkTimeLock();
-                timerInterval = setInterval(checkTimeLock, 1000);
+                checkTimeLock(); timerInt = setInterval(checkTimeLock, 1000);
             } catch (e) {
-                document.getElementById('status-text').innerText = "Invalid or corrupted link data.";
+                document.getElementById('status-indicator').innerText = "ERROR";
+                document.getElementById('receiver-subtitle').innerText = "Link is corrupted.";
             }
         }
 
-        // 3. Time Lock & Destroy Logic
         function checkTimeLock() {
-            if (!receiverPayload) return;
-            const now = Date.now();
-            const unlockTime = receiverPayload.t;
-            const expiryTime = receiverPayload.e;
+            if (!rPayload) return;
+            const now = getNow();
+            const ind = document.getElementById('status-indicator');
 
-            // Destroyed State
-            if (now > expiryTime) {
-                clearInterval(timerInterval);
-                document.getElementById('countdown').classList.add('hidden');
-                document.getElementById('unlock-section').classList.add('hidden');
-                document.getElementById('message-section').classList.add('hidden');
-                document.getElementById('status-text').classList.add('hidden');
+            // Destroyed
+            if (rPayload.e !== 0 && now > rPayload.e) {
+                clearInterval(timerInt);
+                ['countdown', 'unlock-section', 'message-section'].forEach(id => document.getElementById(id).classList.add('hidden'));
                 document.getElementById('destroyed-section').classList.remove('hidden');
+                ind.className = 'status-locked'; ind.innerText = "OFFLINE";
                 return;
             }
 
-            // Locked State
-            if (now < unlockTime) {
-                document.getElementById('countdown').classList.remove('hidden');
-                document.getElementById('status-text').innerText = "Access Denied. Time window opens in:";
+            // Locked
+            if (now < rPayload.t) {
+                ind.className = 'status-locked'; ind.innerText = "LOCKED";
                 
-                const diff = unlockTime - now;
-                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const s = Math.floor((diff % (1000 * 60)) / 1000);
-                
-                document.getElementById('countdown').innerText = 
-                    `${d.toString().padStart(2, '0')}:${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-            } else {
-                // Unlocked / Actionable Window
+                if (rPayload.st === 1) {
+                    document.getElementById('countdown').classList.remove('hidden');
+                    document.getElementById('receiver-subtitle').innerText = "Time window opens in:";
+                    const diff = rPayload.t - now;
+                    const d = Math.floor(diff / 86400000), h = Math.floor((diff % 86400000) / 3600000);
+                    const m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
+                    document.getElementById('countdown').innerText = 
+                        `${d > 0 ? d+'d ' : ''}${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                } else {
+                    document.getElementById('receiver-subtitle').innerText = "This message is time-locked. The sender has hidden the timer.";
+                }
+            } 
+            // Unlocked
+            else {
+                ind.className = 'status-open'; ind.innerText = "ACCESS GRANTED";
                 document.getElementById('countdown').classList.add('hidden');
-                if (document.getElementById('message-section').classList.contains('hidden') && 
-                    document.getElementById('unlock-section').classList.contains('hidden')) {
-                    document.getElementById('status-text').innerText = "Time Window Active.";
+                document.getElementById('receiver-subtitle').innerText = "Time window is active.";
+                if (document.getElementById('message-section').classList.contains('hidden')) {
                     document.getElementById('unlock-section').classList.remove('hidden');
                 }
             }
         }
 
-        // 4. Decrypt & Reveal Logic
         async function decryptMessage() {
-            const pass = document.getElementById('decrypt-pass').value;
-            const decryptedText = await decryptData(receiverPayload.d, receiverPayload.i, pass);
-            
-            if (decryptedText) {
+            const text = await decryptData(rPayload.d, rPayload.i, document.getElementById('decrypt-pass').value);
+            if (text) {
                 document.getElementById('unlock-section').classList.add('hidden');
-                document.getElementById('status-text').classList.add('hidden');
                 document.getElementById('message-section').classList.remove('hidden');
-                document.getElementById('revealed-text').innerText = decryptedText;
-                setupPressAndHold();
-            } else {
-                alert("Incorrect decryption password!");
-            }
+                document.getElementById('revealed-text').innerText = text;
+                setupPress();
+            } else alert("Invalid Key.");
         }
 
-        // 5. Press and Hold Mechanics
-        function setupPressAndHold() {
-            const btn = document.getElementById('reveal-btn');
-            const text = document.getElementById('revealed-text');
-
-            const showMsg = () => {
-                text.classList.remove('blurred-text');
-                btn.style.background = "var(--secondary)";
-                btn.innerText = "👁️ Reading...";
-            };
-            const hideMsg = () => {
-                text.classList.add('blurred-text');
-                btn.style.background = "";
-                btn.innerText = "🧿 Press and Hold to Read";
-            };
-
-            // Mouse events
-            btn.addEventListener('mousedown', showMsg);
-            window.addEventListener('mouseup', hideMsg);
-            document.body.addEventListener('mouseleave', hideMsg);
-            
-            // Touch events for mobile
-            btn.addEventListener('touchstart', (e) => { e.preventDefault(); showMsg(); }, {passive: false});
-            window.addEventListener('touchend', hideMsg);
-            window.addEventListener('touchcancel', hideMsg);
+        function setupPress() {
+            const btn = document.getElementById('reveal-btn'), text = document.getElementById('revealed-text');
+            const show = () => { text.classList.remove('blurred-text'); btn.style.background = "var(--secondary)"; };
+            const hide = () => { text.classList.add('blurred-text'); btn.style.background = ""; };
+            btn.addEventListener('mousedown', show); window.addEventListener('mouseup', hide);
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); show(); }, {passive: false});
+            window.addEventListener('touchend', hide); window.addEventListener('touchcancel', hide);
         }
     </script>
 </body>
