@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Secure Time Capsule</title>
+    <!-- SVG Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2366fcf1' /%3E%3Cstop offset='100%25' stop-color='%2345a29e' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='%231f2833' /%3E%3Cpath d='M30 45 V35 A20 20 0 0 1 70 35 V45 H75 V80 H25 V45 Z' fill='url(%23g)' /%3E%3Ccircle cx='50' cy='62' r='8' fill='%230b0c10' /%3E%3Cpath d='M50 62 L50 40' stroke='%230b0c10' stroke-width='4' stroke-linecap='round' /%3E%3C/svg%3E">
     
     <style>
@@ -69,9 +70,10 @@
         .form-grid { display: grid; gap: 15px; text-align: left; }
         .form-group label { display: block; font-size: 0.75rem; color: var(--secondary); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
         
+        /* Inputs: font-size 1rem (16px) prevents iOS auto-zoom */
         input[type="text"], input[type="password"], input[type="datetime-local"], select, textarea {
             width: 100%; padding: 14px; background: var(--input-bg); border: 1px solid var(--border-acc);
-            color: white; border-radius: 10px; box-sizing: border-box; font-family: inherit; font-size: 1rem; /* 1rem prevents iOS zoom */
+            color: white; border-radius: 10px; box-sizing: border-box; font-family: inherit; font-size: 16px; 
             transition: all 0.3s ease;
         }
         input:focus, select:focus, textarea:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 12px var(--border-acc); background: rgba(0,0,0,0.7); }
@@ -138,18 +140,21 @@
         
         /* Navigation */
         .top-nav { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid var(--border-acc); padding-bottom: 15px; flex-wrap: wrap;}
-        .nav-btn { background: none; border: none; color: var(--secondary); font-size: 0.8rem; padding: 6px 12px; width: auto; text-transform: uppercase; font-weight: 700; margin: 0; cursor: pointer; border-radius: 6px; letter-spacing: 0.5px;}
+        .nav-btn { display: flex; align-items: center; gap: 6px; background: none; border: none; color: var(--secondary); font-size: 0.8rem; padding: 6px 12px; width: auto; text-transform: uppercase; font-weight: 700; margin: 0; cursor: pointer; border-radius: 6px; letter-spacing: 0.5px;}
         .nav-btn:hover { color: var(--primary); background: rgba(255,255,255,0.05); transform: none; box-shadow: none; }
 
         .dev-footer { margin-top: 30px; font-size: 0.85rem; color: #666; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 20px;}
         .dev-footer a { color: var(--secondary); text-decoration: none; transition: color 0.2s; }
         .dev-footer a:hover { color: var(--primary); }
 
-        .info-panel { background: rgba(255, 213, 79, 0.1); border: 1px solid var(--warn); padding: 15px; border-radius: 10px; margin-bottom: 20px; }
-        .info-panel p { color: var(--warn); font-size: 0.85rem; margin: 0; font-weight: 600; line-height: 1.5; text-align: left;}
+        .info-panel { background: rgba(255, 213, 79, 0.1); border: 1px solid var(--warn); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; gap: 12px; align-items: flex-start; text-align: left;}
+        .info-panel p { color: var(--warn); font-size: 0.85rem; margin: 0; font-weight: 600; line-height: 1.5; }
         
         .pass-toggle { position: absolute; right: 15px; top: 15px; background: none; border: none; padding: 0; width: auto; margin: 0; color: var(--secondary); cursor: pointer; }
         .pass-toggle:hover { color: var(--primary); background: transparent; box-shadow: none; transform: none; }
+        
+        .countdown-pulse { font-size: 4rem; color: var(--primary); margin: 20px 0; font-weight: 900; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.7; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -157,7 +162,7 @@
     <!-- CUSTOM ALERT MODAL -->
     <div id="custom-alert" class="modal">
         <div class="modal-content" style="text-align: center; max-width: 350px;">
-            <svg id="alert-icon" style="width: 50px; height: 50px; fill: var(--primary); margin: 0 auto 15px auto; display: block;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            <svg id="alert-icon" style="width: 50px; height: 50px; fill: var(--primary); margin: 0 auto 15px auto; display: block;" viewBox="0 0 24 24"></svg>
             <h2 id="alert-title" style="color: var(--primary); margin-top: 0;">Notice</h2>
             <p id="alert-message" style="color: var(--text); font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px;"></p>
             <button onclick="closeModal('custom-alert')">Acknowledge</button>
@@ -167,7 +172,7 @@
     <!-- SCREENSHOT WARNING OVERLAY -->
     <div id="screenshot-warning" class="modal">
         <div class="modal-content" style="text-align: center; border-color: var(--error);">
-            <svg style="width: 60px; height: 60px; fill: var(--error); margin: 0 auto 15px auto; display: block;" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+            <svg style="width: 60px; height: 60px; fill: var(--error); margin: 0 auto 15px auto; display: block;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
             <h2 style="color: var(--error); margin-top: 0; text-transform: uppercase; letter-spacing: 1px;">Security Alert</h2>
             <p style="color: var(--text); font-size: 0.95rem; line-height: 1.6;">A screen capture or recording attempt was detected. The payload has been concealed to protect data integrity.</p>
             <button onclick="closeModal('screenshot-warning')" style="background: var(--error); color: white;">Close Alert</button>
@@ -197,9 +202,15 @@
         <!-- CREATOR PANEL -->
         <div id="creator-panel" class="hidden">
             <div class="top-nav">
-                <button class="nav-btn" onclick="location.reload()">🔄 Reset</button>
-                <button class="nav-btn" onclick="openModal('instructions-modal')">📖 Guide</button>
-                <button class="nav-btn" onclick="toggleHistory()">📜 History</button>
+                <button class="nav-btn" onclick="location.reload()">
+                    <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg> Reset
+                </button>
+                <button class="nav-btn" onclick="openModal('instructions-modal')">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg> Guide
+                </button>
+                <button class="nav-btn" onclick="toggleHistory()">
+                    <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg> History
+                </button>
             </div>
             
             <h1>Secure Time Capsule</h1>
@@ -224,13 +235,20 @@
                     </div>
                     <div class="form-group">
                         <label>Self-Destruct</label>
-                        <select id="expiry-type">
+                        <select id="expiry-type" onchange="toggleCustomExpiry()">
                             <option value="never">Never (Unlimited)</option>
                             <option value="1h">1 Hour after unlock</option>
                             <option value="1d">1 Day after unlock</option>
                             <option value="3d">3 Days after unlock</option>
+                            <option value="custom">Custom Date & Time</option>
                         </select>
                     </div>
+                </div>
+                
+                <!-- Hidden Custom Expiry Input -->
+                <div class="form-group hidden" id="custom-expiry-container">
+                    <label>Custom Destruction Time</label>
+                    <input type="datetime-local" id="custom-expiry-input">
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
@@ -267,23 +285,34 @@
 
             <!-- Shorten Step UI -->
             <div id="shorten-step" class="form-grid hidden" style="text-align: center; padding-top: 10px;">
-                <svg style="width: 50px; height: 50px; fill: var(--primary); margin: 0 auto;" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                <h2 style="color: var(--primary); margin-bottom: 5px; margin-top: 10px;">Link Copied!</h2>
                 
-                <div class="info-panel">
-                    <p>💡 <b>Why use TinyURL?</b><br>Because this app uses zero servers, your entire encrypted message is stored directly within the link itself. This makes the URL very long. Shortening it ensures it won't break when you send it via WhatsApp, Instagram, or Email.</p>
+                <div id="shorten-loading">
+                    <h2 style="color: var(--primary); margin-top: 10px;">Link Copied!</h2>
+                    <p style="font-size: 0.95rem; color: var(--text);">Opening URL Shortener in...</p>
+                    <div class="countdown-pulse" id="redirect-timer">5</div>
+                    <p style="font-size: 0.85rem; color: var(--secondary);">When the new tab opens, simply <b>PASTE</b> to shorten your link.</p>
                 </div>
                 
-                <p style="font-size: 0.9rem; color: #aaa; margin-bottom: 20px;">We've copied your long link and opened TinyURL in a new tab. Shorten it, and paste the result below.</p>
-                
-                <div class="form-group" style="text-align: left;">
-                    <label>Paste Shortened Link Here</label>
-                    <input type="text" id="short-link-input" placeholder="https://tinyurl.com/...">
-                </div>
-                
-                <div style="display: flex; gap: 10px; margin-top: 10px;">
-                    <button onclick="finalizeShortLink()" style="flex: 2;">Save Capsule</button>
-                    <button onclick="skipShorten()" class="secondary-btn" style="flex: 1;">Skip Step</button>
+                <div id="shorten-action" class="hidden">
+                    <svg style="width: 50px; height: 50px; fill: var(--primary); margin: 0 auto;" viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+                    
+                    <div class="info-panel" style="margin-top: 20px;">
+                        <svg style="width: 30px; height: 30px; fill: var(--warn); flex-shrink: 0;" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zM14 21c0 .55-.45 1-1 1h-2c-.55 0-1-.45-1-1v-1h4v1z"/></svg>
+                        <p><b>Why use TinyURL?</b><br>Because this app uses zero servers, your entire encrypted message is stored directly within the link itself. Shortening it ensures it won't break when sent via WhatsApp or Email.</p>
+                    </div>
+                    
+                    <div class="form-group" style="text-align: left;">
+                        <label>Paste Shortened Link Here</label>
+                        <input type="text" id="short-link-input" placeholder="https://tinyurl.com/...">
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button onclick="finalizeShortLink()" style="flex: 2;">Save Capsule</button>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button onclick="window.open('https://tinyurl.com/app', '_blank')" class="secondary-btn" style="flex: 1;">Re-open TinyURL</button>
+                        <button onclick="skipShorten()" class="secondary-btn" style="flex: 1; border-color: #555; color: #aaa;">Skip Step</button>
+                    </div>
                 </div>
             </div>
 
@@ -314,7 +343,9 @@
             <div id="history-view" class="hidden" style="text-align: left;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h2 style="font-size: 1.2rem; color: var(--primary); margin:0;">Encrypted Archives</h2>
-                    <button class="nav-btn" onclick="clearHistory()" style="color: var(--error); border: 1px solid var(--error);">🗑️ Clear Data</button>
+                    <button class="nav-btn" onclick="clearHistory()" style="color: var(--error); border: 1px solid var(--error);">
+                        <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/></svg> Clear Data
+                    </button>
                 </div>
                 
                 <div id="history-list" style="max-height: 400px; overflow-y: auto; padding-right: 5px;"></div>
@@ -332,10 +363,12 @@
             
             <div id="calendar-actions" class="hidden" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px;">
                 <button onclick="openGoogleCalendar()" style="background: #4285F4; color: white; border: none;">
-                    📅 Add to Google Calendar
+                    <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+                    Add to Google Calendar
                 </button>
                 <button onclick="downloadICS()" class="secondary-btn" style="font-size: 0.8rem; padding: 10px;">
-                    ⏰ Download .ICS (Apple/Outlook)
+                    <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zM12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                    Download .ICS (Apple/Outlook)
                 </button>
             </div>
 
@@ -372,8 +405,8 @@
             </div>
 
             <div style="margin-top: 35px; padding-top: 20px; border-top: 1px solid var(--border-acc);">
-                <button class="nav-btn" onclick="window.location.href = window.location.pathname" style="margin: 0 auto; display: flex; align-items: center; gap: 8px;">
-                    <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                <button class="nav-btn" onclick="window.location.href = window.location.pathname" style="margin: 0 auto;">
+                    <svg viewBox="0 0 24 24"><path d="M13.13 22.19L11.5 18.36C13.07 17.78 14.54 17 15.9 16.09L13.13 22.19M5.64 12.5L1.81 10.87L7.91 8.1C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39C21.61 2.39 16.66 .269 11 5.93C8.81 8.12 7.5 10.53 6.65 12.64C6.37 13.39 6.56 14.21 7.11 14.77L9.24 16.89C9.79 17.45 10.61 17.63 11.36 17.35C13.47 16.5 15.88 15.19 18.07 13C23.73 7.34 21.61 2.39 21.61 2.39M14.36 9.64C13.58 9.64 12.95 9.01 12.95 8.23C12.95 7.45 13.58 6.82 14.36 6.82C15.14 6.82 15.77 7.45 15.77 8.23C15.77 9.01 15.14 9.64 14.36 9.64Z"/></svg>
                     Initialize New Capsule
                 </button>
             </div>
@@ -418,11 +451,22 @@
             setTimeout(() => btnElement.innerHTML = origHTML, 2000);
         }
 
+        function toggleCustomExpiry() {
+            const type = document.getElementById('expiry-type').value;
+            const container = document.getElementById('custom-expiry-container');
+            if(type === 'custom') {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
         // --- Globals ---
         let generatedLongLink = "";
         let generatedUnlockTime = 0;
         let generatedHint = "";
         let generatedPass = "";
+        let redirectTimerInterval = null;
 
         // --- Network Time Sync ---
         let timeOffset = 0;
@@ -497,7 +541,10 @@
                                 <input type="text" id="hist-pass-${index}" value="${h.pass}" readonly style="padding: 6px; background: rgba(0,0,0,0.5); font-size: 0.8rem; width: auto; flex:1;">
                                 <button class="secondary-btn" onclick="copyValue('hist-pass-${index}', this)" style="padding: 6px; margin:0; width:auto;"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
                             </div>
-                            <a href="${h.link}" target="_blank" style="color:var(--secondary); word-break: break-all; display:block; margin-top:10px; font-weight:bold;">Execute Link 🚀</a>
+                            <a href="${h.link}" target="_blank" style="color:var(--secondary); word-break: break-all; display:flex; align-items:center; gap:5px; margin-top:10px; font-weight:bold;">
+                                <svg viewBox="0 0 24 24" style="width:14px; height:14px;"><path d="M13.13 22.19L11.5 18.36C13.07 17.78 14.54 17 15.9 16.09L13.13 22.19M5.64 12.5L1.81 10.87L7.91 8.1C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39C21.61 2.39 16.66 .269 11 5.93C8.81 8.12 7.5 10.53 6.65 12.64C6.37 13.39 6.56 14.21 7.11 14.77L9.24 16.89C9.79 17.45 10.61 17.63 11.36 17.35C13.47 16.5 15.88 15.19 18.07 13C23.73 7.34 21.61 2.39 21.61 2.39M14.36 9.64C13.58 9.64 12.95 9.01 12.95 8.23C12.95 7.45 13.58 6.82 14.36 6.82C15.14 6.82 15.77 7.45 15.77 8.23C15.77 9.01 15.14 9.64 14.36 9.64Z"/></svg>
+                                Execute Link
+                            </a>
                         </div>
                     `).join('');
                 }
@@ -534,9 +581,14 @@
             if (expiryType === '1h') expiryTime = generatedUnlockTime + (3600000);
             else if (expiryType === '1d') expiryTime = generatedUnlockTime + (86400000);
             else if (expiryType === '3d') expiryTime = generatedUnlockTime + (259200000);
+            else if (expiryType === 'custom') {
+                const customVal = document.getElementById('custom-expiry-input').value;
+                if(!customVal) return showAlert("Missing Data", "Please select a custom destruction time.", true);
+                expiryTime = new Date(customVal).getTime();
+            }
 
             if (expiryTime !== 0 && expiryTime <= generatedUnlockTime) {
-                return showAlert("Logic Error", "Self-Destruct time must be after the unlock time.", true);
+                return showAlert("Logic Error", "Self-Destruct time must be set AFTER the unlock time.", true);
             }
 
             const encrypted = await encryptData(msg, generatedPass);
@@ -544,13 +596,32 @@
             
             generatedLongLink = `${window.location.origin}${window.location.pathname}#${btoa(JSON.stringify(payload))}`;
             
-            // Auto Copy & Open TinyURL
+            // Auto Copy & Trigger Countdown UI
             try {
                 await navigator.clipboard.writeText(generatedLongLink);
-                window.open('https://tinyurl.com/app', '_blank');
-                
                 document.getElementById('creation-form').classList.add('hidden');
                 document.getElementById('shorten-step').classList.remove('hidden');
+                
+                document.getElementById('shorten-loading').classList.remove('hidden');
+                document.getElementById('shorten-action').classList.add('hidden');
+                
+                let countdown = 5;
+                document.getElementById('redirect-timer').innerText = countdown;
+                
+                if(redirectTimerInterval) clearInterval(redirectTimerInterval);
+                
+                redirectTimerInterval = setInterval(() => {
+                    countdown--;
+                    document.getElementById('redirect-timer').innerText = countdown;
+                    if(countdown <= 0) {
+                        clearInterval(redirectTimerInterval);
+                        document.getElementById('shorten-loading').classList.add('hidden');
+                        document.getElementById('shorten-action').classList.remove('hidden');
+                        // Attempt auto-open
+                        window.open('https://tinyurl.com/app', '_blank');
+                    }
+                }, 1000);
+                
             } catch (err) {
                 skipShorten();
             }
@@ -565,6 +636,7 @@
         }
 
         function skipShorten() {
+            if(redirectTimerInterval) clearInterval(redirectTimerInterval);
             document.getElementById('shorten-step').classList.add('hidden');
             document.getElementById('creation-form').classList.add('hidden');
             showFinalLink(generatedLongLink);
