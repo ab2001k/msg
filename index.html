@@ -70,7 +70,6 @@
         .form-grid { display: grid; gap: 15px; text-align: left; }
         .form-group label { display: block; font-size: 0.75rem; color: var(--secondary); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
         
-        /* Inputs: font-size 1rem (16px) prevents iOS auto-zoom */
         input[type="text"], input[type="password"], input[type="datetime-local"], select, textarea {
             width: 100%; padding: 14px; background: var(--input-bg); border: 1px solid var(--border-acc);
             color: white; border-radius: 10px; box-sizing: border-box; font-family: inherit; font-size: 16px; 
@@ -140,7 +139,7 @@
         
         /* Navigation */
         .top-nav { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid var(--border-acc); padding-bottom: 15px; flex-wrap: wrap;}
-        .nav-btn { display: flex; align-items: center; gap: 6px; background: none; border: none; color: var(--secondary); font-size: 0.8rem; padding: 6px 12px; width: auto; text-transform: uppercase; font-weight: 700; margin: 0; cursor: pointer; border-radius: 6px; letter-spacing: 0.5px;}
+        .nav-btn { display: flex; align-items: center; justify-content: center; gap: 6px; background: none; border: none; color: var(--secondary); font-size: 0.8rem; padding: 6px 12px; width: auto; text-transform: uppercase; font-weight: 700; margin: 0; cursor: pointer; border-radius: 6px; letter-spacing: 0.5px;}
         .nav-btn:hover { color: var(--primary); background: rgba(255,255,255,0.05); transform: none; box-shadow: none; }
 
         .dev-footer { margin-top: 30px; font-size: 0.85rem; color: #666; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 20px;}
@@ -150,7 +149,7 @@
         .info-panel { background: rgba(255, 213, 79, 0.1); border: 1px solid var(--warn); padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; gap: 12px; align-items: flex-start; text-align: left;}
         .info-panel p { color: var(--warn); font-size: 0.85rem; margin: 0; font-weight: 600; line-height: 1.5; }
         
-        .pass-toggle { position: absolute; right: 15px; top: 15px; background: none; border: none; padding: 0; width: auto; margin: 0; color: var(--secondary); cursor: pointer; }
+        .pass-toggle { position: absolute; right: 15px; top: 15px; background: none; border: none; padding: 0; width: auto; margin: 0; color: var(--secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .pass-toggle:hover { color: var(--primary); background: transparent; box-shadow: none; transform: none; }
         
         .countdown-pulse { font-size: 4rem; color: var(--primary); margin: 20px 0; font-weight: 900; animation: pulse 1s infinite; }
@@ -166,6 +165,19 @@
             <h2 id="alert-title" style="color: var(--primary); margin-top: 0;">Notice</h2>
             <p id="alert-message" style="color: var(--text); font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px;"></p>
             <button onclick="closeModal('custom-alert')">Acknowledge</button>
+        </div>
+    </div>
+
+    <!-- CUSTOM CONFIRM MODAL -->
+    <div id="custom-confirm" class="modal">
+        <div class="modal-content" style="text-align: center; max-width: 350px; border-color: var(--error);">
+            <svg style="width: 50px; height: 50px; fill: var(--error); margin: 0 auto 15px auto; display: block;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            <h2 id="confirm-title" style="color: var(--error); margin-top: 0;">Confirm</h2>
+            <p id="confirm-message" style="color: var(--text); font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px;"></p>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="executeConfirm()" style="background: var(--error); color: white; flex: 1;">Proceed</button>
+                <button onclick="closeModal('custom-confirm')" class="secondary-btn" style="flex: 1;">Cancel</button>
+            </div>
         </div>
     </div>
 
@@ -245,7 +257,6 @@
                     </div>
                 </div>
                 
-                <!-- Hidden Custom Expiry Input -->
                 <div class="form-group hidden" id="custom-expiry-container">
                     <label>Custom Destruction Time</label>
                     <input type="datetime-local" id="custom-expiry-input">
@@ -298,7 +309,7 @@
                     
                     <div class="info-panel" style="margin-top: 20px;">
                         <svg style="width: 30px; height: 30px; fill: var(--warn); flex-shrink: 0;" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7zM14 21c0 .55-.45 1-1 1h-2c-.55 0-1-.45-1-1v-1h4v1z"/></svg>
-                        <p><b>Why use TinyURL?</b><br>Because this app uses zero servers, your entire encrypted message is stored directly within the link itself. Shortening it ensures it won't break when sent via WhatsApp or Email.</p>
+                        <p><b>Why use TinyURL?</b><br>Because this app uses zero servers, your encrypted message is stored directly within the link itself. Shortening it ensures it won't break during transit.</p>
                     </div>
                     
                     <div class="form-group" style="text-align: left;">
@@ -324,7 +335,7 @@
                     <label>Capsule Link:</label>
                     <div style="display: flex; gap: 8px;">
                         <input type="text" id="link-output" readonly style="flex: 1; font-family: monospace; font-size:0.85rem; background: rgba(0,0,0,0.6); color: var(--secondary);">
-                        <button class="secondary-btn" onclick="copyValue('link-output', this)" style="width: auto; padding: 0 15px; margin-top: 0;"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
+                        <button class="secondary-btn" onclick="copyValue('link-output', this)" style="width: auto; padding: 0 15px; margin-top: 0; display:flex; align-items:center; justify-content:center;"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
                     </div>
                 </div>
 
@@ -332,7 +343,7 @@
                     <label>Decryption Password (Share this!):</label>
                     <div style="display: flex; gap: 8px;">
                         <input type="text" id="final-pass-output" readonly style="flex: 1; font-family: monospace; background: rgba(0,0,0,0.6);">
-                        <button class="secondary-btn" onclick="copyValue('final-pass-output', this)" style="width: auto; padding: 0 15px; margin-top: 0;"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
+                        <button class="secondary-btn" onclick="copyValue('final-pass-output', this)" style="width: auto; padding: 0 15px; margin-top: 0; display:flex; align-items:center; justify-content:center;"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
                     </div>
                 </div>
                 
@@ -343,13 +354,13 @@
             <div id="history-view" class="hidden" style="text-align: left;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h2 style="font-size: 1.2rem; color: var(--primary); margin:0;">Encrypted Archives</h2>
-                    <button class="nav-btn" onclick="clearHistory()" style="color: var(--error); border: 1px solid var(--error);">
+                    <button class="nav-btn" onclick="requestClearHistory()" style="color: var(--error); border: 1px solid var(--error); display:flex; align-items:center; justify-content:center; gap: 6px;">
                         <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/></svg> Clear Data
                     </button>
                 </div>
                 
                 <div id="history-list" style="max-height: 400px; overflow-y: auto; padding-right: 5px;"></div>
-                <button class="secondary-btn" onclick="toggleHistory()" style="margin-top: 20px;">Return to Terminal</button>
+                <button class="secondary-btn" onclick="toggleHistory()" style="margin-top: 20px; display:flex; align-items:center; justify-content:center;">Return to Terminal</button>
             </div>
         </div>
 
@@ -362,11 +373,11 @@
             <div id="countdown" class="hidden"></div>
             
             <div id="calendar-actions" class="hidden" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px;">
-                <button onclick="openGoogleCalendar()" style="background: #4285F4; color: white; border: none;">
+                <button onclick="openGoogleCalendar()" style="background: #4285F4; color: white; border: none; display:flex; align-items:center; justify-content:center; gap:8px;">
                     <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
                     Add to Google Calendar
                 </button>
-                <button onclick="downloadICS()" class="secondary-btn" style="font-size: 0.8rem; padding: 10px;">
+                <button onclick="downloadICS()" class="secondary-btn" style="font-size: 0.8rem; padding: 10px; display:flex; align-items:center; justify-content:center; gap:8px;">
                     <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zM12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
                     Download .ICS (Apple/Outlook)
                 </button>
@@ -379,7 +390,7 @@
                     <button class="pass-toggle" type="button" onclick="togglePassVisibility('decrypt-pass')" style="top: 29px;" title="Show Password">
                         <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                     </button>
-                    <button onclick="decryptMessage()">
+                    <button onclick="decryptMessage()" style="display:flex; align-items:center; justify-content:center; gap:8px;">
                         <svg viewBox="0 0 24 24"><path d="M12 13c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6-6v2h-2v-2h-8v2H6V7c0-2.76 2.24-5 5-5s5 2.24 5 5zm0 4h2v10c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V11c0-1.1.9-2 2-2h12z"/></svg>
                         Decrypt Payload
                     </button>
@@ -392,7 +403,7 @@
                 <div id="secret-message-box">
                     <span id="revealed-text" class="blurred-text"></span>
                 </div>
-                <button id="reveal-btn" style="margin-top:25px; user-select: none;">
+                <button id="reveal-btn" style="margin-top:25px; user-select: none; display:flex; align-items:center; justify-content:center; gap:8px;">
                     <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                     Press and Hold to Scan
                 </button>
@@ -405,7 +416,7 @@
             </div>
 
             <div style="margin-top: 35px; padding-top: 20px; border-top: 1px solid var(--border-acc);">
-                <button class="nav-btn" onclick="window.location.href = window.location.pathname" style="margin: 0 auto;">
+                <button class="nav-btn" onclick="window.location.href = window.location.pathname" style="margin: 0 auto; display:flex; align-items:center; justify-content:center; gap:8px;">
                     <svg viewBox="0 0 24 24"><path d="M13.13 22.19L11.5 18.36C13.07 17.78 14.54 17 15.9 16.09L13.13 22.19M5.64 12.5L1.81 10.87L7.91 8.1C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39C21.61 2.39 16.66 .269 11 5.93C8.81 8.12 7.5 10.53 6.65 12.64C6.37 13.39 6.56 14.21 7.11 14.77L9.24 16.89C9.79 17.45 10.61 17.63 11.36 17.35C13.47 16.5 15.88 15.19 18.07 13C23.73 7.34 21.61 2.39 21.61 2.39M14.36 9.64C13.58 9.64 12.95 9.01 12.95 8.23C12.95 7.45 13.58 6.82 14.36 6.82C15.14 6.82 15.77 7.45 15.77 8.23C15.77 9.01 15.14 9.64 14.36 9.64Z"/></svg>
                     Initialize New Capsule
                 </button>
@@ -436,6 +447,18 @@
                 icon.innerHTML = `<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>`;
             }
             openModal('custom-alert');
+        }
+
+        let confirmAction = null;
+        function showConfirm(title, message, action) {
+            document.getElementById('confirm-title').innerText = title;
+            document.getElementById('confirm-message').innerText = message;
+            confirmAction = action;
+            openModal('custom-confirm');
+        }
+        function executeConfirm() {
+            if(confirmAction) confirmAction();
+            closeModal('custom-confirm');
         }
 
         function togglePassVisibility(inputId) {
@@ -513,11 +536,11 @@
             localStorage.setItem('chronoHistoryFinal', JSON.stringify(history));
         }
 
-        function clearHistory() {
-            if(confirm("Are you sure you want to permanently delete all local archives?")) {
+        function requestClearHistory() {
+            showConfirm("Clear Archives?", "Are you sure you want to permanently delete all local archives? This action cannot be undone.", () => {
                 localStorage.removeItem('chronoHistoryFinal');
-                toggleHistory(); toggleHistory(); // Refresh view
-            }
+                toggleHistory(); toggleHistory(); 
+            });
         }
 
         function toggleHistory() {
@@ -539,7 +562,7 @@
                             <div style="display:flex; align-items:center; gap:10px; margin-top:8px;">
                                 <b style="color:var(--primary);">Pass:</b>
                                 <input type="text" id="hist-pass-${index}" value="${h.pass}" readonly style="padding: 6px; background: rgba(0,0,0,0.5); font-size: 0.8rem; width: auto; flex:1;">
-                                <button class="secondary-btn" onclick="copyValue('hist-pass-${index}', this)" style="padding: 6px; margin:0; width:auto;"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
+                                <button class="secondary-btn" onclick="copyValue('hist-pass-${index}', this)" style="padding: 6px; margin:0; width:auto; display:flex; align-items:center; justify-content:center;"><svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
                             </div>
                             <a href="${h.link}" target="_blank" style="color:var(--secondary); word-break: break-all; display:flex; align-items:center; gap:5px; margin-top:10px; font-weight:bold;">
                                 <svg viewBox="0 0 24 24" style="width:14px; height:14px;"><path d="M13.13 22.19L11.5 18.36C13.07 17.78 14.54 17 15.9 16.09L13.13 22.19M5.64 12.5L1.81 10.87L7.91 8.1C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39C21.61 2.39 16.66 .269 11 5.93C8.81 8.12 7.5 10.53 6.65 12.64C6.37 13.39 6.56 14.21 7.11 14.77L9.24 16.89C9.79 17.45 10.61 17.63 11.36 17.35C13.47 16.5 15.88 15.19 18.07 13C23.73 7.34 21.61 2.39 21.61 2.39M14.36 9.64C13.58 9.64 12.95 9.01 12.95 8.23C12.95 7.45 13.58 6.82 14.36 6.82C15.14 6.82 15.77 7.45 15.77 8.23C15.77 9.01 15.14 9.64 14.36 9.64Z"/></svg>
@@ -596,7 +619,6 @@
             
             generatedLongLink = `${window.location.origin}${window.location.pathname}#${btoa(JSON.stringify(payload))}`;
             
-            // Auto Copy & Trigger Countdown UI
             try {
                 await navigator.clipboard.writeText(generatedLongLink);
                 document.getElementById('creation-form').classList.add('hidden');
@@ -617,7 +639,6 @@
                         clearInterval(redirectTimerInterval);
                         document.getElementById('shorten-loading').classList.add('hidden');
                         document.getElementById('shorten-action').classList.remove('hidden');
-                        // Attempt auto-open
                         window.open('https://tinyurl.com/app', '_blank');
                     }
                 }, 1000);
@@ -628,8 +649,11 @@
         }
 
         function finalizeShortLink() {
-            const shortLink = document.getElementById('short-link-input').value;
-            if(!shortLink.includes("http")) return showAlert("Invalid Link", "Please enter a valid shortened URL.", true);
+            const shortLink = document.getElementById('short-link-input').value.trim();
+            
+            if(!shortLink.startsWith("http")) return showAlert("Invalid Link", "Please enter a valid URL.", true);
+            if(shortLink === generatedLongLink) return showAlert("Validation Error", "You pasted the original long link. Please paste the shortened version from TinyURL.", true);
+            if(shortLink.length > 150) return showAlert("Validation Error", "This link is still quite long. Did you copy the correct shortened URL?", true);
             
             document.getElementById('shorten-step').classList.add('hidden');
             showFinalLink(shortLink);
